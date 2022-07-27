@@ -19,3 +19,5 @@ The game contains 20 levels in which you must wander through the maze and collec
 In later levels there are also locked gates which can be opened by the walking onto switches, both by the player and the monsters. Switches can be triggered multiple times and will always close all open gates and open all closed gates simultaneously.
 
 There's a scoring system based on the number of moves it takes you to finish each level. Grade A means you have found the best known solution by the level author. Grade S means you've found an even better solution, which is quite likely possible, because the level creator is no puzzle genius himself. If you find such a solution, feel free to share it on Reddit.
+
+Your progress is saved automatically.
