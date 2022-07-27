@@ -3,7 +3,7 @@ A game for the Sawayama Z5 Powerlance
 
 ## Installation
 
-Download the monstermaze.js file into your servers folder:
+Download the [monstermaze.js](https://raw.githubusercontent.com/Zwergesel/last-call-bbs-monster-maze/main/monstermaze.js) file into your servers folder:
 ```
 <HOME>\Documents\My Games\Last Call BBS\<SteamID>\servers
 ```
