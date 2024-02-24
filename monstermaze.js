@@ -10,7 +10,8 @@ TUTORIAL_HEIGHT = 20
 SCREEN_GAME = 1
 SCREEN_STATS = 2
 
-MOVE_DELAY = 15
+MOVE_DELAY = 13
+SIMULATE_AT = [12, 7]
 PROWL_AT = [8, 1]
 
 let screen;
@@ -232,7 +233,7 @@ const levels = [{
         "#. . . . . . . .#",
         "# #####   ###   #",
         "#. .#. B .#P . .#",
-        "#       # # # ###",
+        "#   #   # # # ###",
         "#. . . .#. .#. .#",
         "# # # ###   # ###",
         "#.#.#. . . . .#.#",
@@ -604,22 +605,23 @@ function onUpdate()
 
     // Monsters
     --moveDelay;
-    let prowling = PROWL_AT.indexOf(moveDelay) >= 0;
+    const simulate = SIMULATE_AT.indexOf(moveDelay) >= 0;
+    const prowling = PROWL_AT.indexOf(moveDelay) >= 0;
     let prowled = false;
 
     for (let i=0; i<monsters.length; ++i) {
-        if (prowling && !gameOver) {
+        if ((simulate || prowling) && !gameOver) {
             let dx = player.x > monsters[i].x ? 1 : -1;
             let dy = player.y > monsters[i].y ? 1 : -1;
             let moved = false;
             if (monsters[i].x != player.x && is_walkable(level.data[monsters[i].y][monsters[i].x + dx])) {
-                monsters[i].x += dx * 2;
+                if (!simulate) monsters[i].x += dx * 2;
                 prowled = moved = true;
             } else if (monsters[i].y != player.y && is_walkable(level.data[monsters[i].y + dy][monsters[i].x])) {
-                monsters[i].y += dy * 2;
+                if (!simulate) monsters[i].y += dy * 2;
                 prowled = moved = true;
             }
-            if (moved && level.data[monsters[i].y][monsters[i].x] == 'B') gatesOpen = !gatesOpen;
+            if (!simulate && moved && level.data[monsters[i].y][monsters[i].x] == 'B') gatesOpen = !gatesOpen;
         }
         if (monsters[i].x == player.x && monsters[i].y == player.y) {
             gameOver = true;
@@ -627,7 +629,7 @@ function onUpdate()
         }
         drawText(glyph.monster, brightness.monster, level.x + monsters[i].x, level.y + monsters[i].y);
     }
-    if (prowling && !prowled) moveDelay = 0;
+    if (simulate && !prowled) moveDelay = 0;
 
     // Player / Game End Message
     if (gameOver || gameWon) {
