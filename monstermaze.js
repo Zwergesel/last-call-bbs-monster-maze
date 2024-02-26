@@ -127,7 +127,27 @@ const levels = [{
         "#. . . . . .#",
         "#############",
     ],
-    grades: [54, 55, 60, 75]
+    grades: [54, 58, 64, 76]
+},
+{
+    template: [
+        "  ###################  ",
+        "  #. . . . . . . . .#  ",
+        "###   ###       ### ###",
+        "#. . T .#. . T .#. . .#",
+        "# ### # #       #   # #",
+        "#. . .#. . . . . . .#.#",
+        "###   ###########   # #",
+        "  #. .#         #. . .#",
+        "  ### #   #######   ###",
+        "  #. .#   #.#. . . .#  ",
+        "  ### ##### #   ### #  ",
+        "    #. . T . . . . T#  ",
+        "    ###           # #  ",
+        "      #. . . . P .#M#  ",
+        "      #########-#####  ",
+    ],
+    grades: [44, 48, 54, 64]
 },
 {
     template: [
@@ -315,6 +335,28 @@ const levels = [{
 },
 {
     template: [
+        "###################            ",
+        "#. . . . .#. . . .#            ",
+        "###   #   #   ### #   #-#######",
+        "#. . .#. . . .#. .#   #T T T T#",
+        "#   ##### ### ### #   #       #",
+        "#. . . .#. . . . .#   #T T T T#",
+        "#       #       # #   ##### ###",
+        "#. . . P . . . .#.#       #M#  ",
+        "### ###       # ###   #####G#  ",
+        "#M#. .#. . . .#. .#   #. . .#  ",
+        "# #   # ###   # # #   # #####  ",
+        "#. . . . . . B .#.#   #.#      ",
+        "###########     ###   # #      ",
+        "          #. . . .#   #.#      ",
+        "          ###G######### #      ",
+        "            #.g. . . . .#      ",
+        "            #############      ",
+    ],
+    grades: [140, 146, 168, 200]
+},
+{
+    template: [
         "#################",
         "#. . .#.#. . . .#",
         "# # ### # ##### #",
@@ -353,7 +395,7 @@ const levels = [{
         "#T .#. . .#. .#. . .#",
         "#####################",
     ],
-    grades: [148, 154, 164, 196]
+    grades: [148, 154, 182, 220]
 },
 {
     template: [
@@ -393,7 +435,7 @@ const levels = [{
         "          #. . .G. .G. .g. .I",
         "          ###################",
     ],
-    grades: [162, 166, 174, 210]
+    grades: [162, 170, 190, 220]
 },
 {
     template: [
@@ -415,7 +457,7 @@ const levels = [{
         "#. . . B . . .#. .#. . .#",
         "#########################",
     ],
-    grades: [130, 140, 150, 200]
+    grades: [130, 136, 160, 200]
 }
 ];
 
@@ -454,11 +496,16 @@ function onConnect()
     if (savegame) {
         stats = JSON.parse(savegame);
     } else {
-        stats = { currentLevel: 0, maxLevel: 0, best: [] }
-        for (let i=0; i<levels.length; ++i) stats.best.push(1000);
-        save();
+        resetSavegame();
     }
     loadLevel();
+}
+
+function resetSavegame()
+{
+    stats = { currentLevel: 0, maxLevel: 0, best: [] }
+    for (let i=0; i<levels.length; ++i) stats.best.push(1000);
+    save();
 }
 
 function save() {
@@ -536,17 +583,19 @@ function onUpdate()
     clearScreen();
 
     if (screen == SCREEN_STATS) {
-        drawBox(brightness.box, 1, 1, 54, 18);
-        drawText("Level Moves Grade      Level Moves Grade", brightness.message, 6, 3);
-        for (let i=0; i<10; ++i) {
-            drawText(right3(i + 1), brightness.message, 7, 5 + i);
-            drawText(right3(stats.best[i]), brightness.message, 13, 5 + i);
-            drawText(grade(stats.best[i], levels[i].grades), brightness.message, 20, 5 + i);
-            drawText(right3(i + 11), brightness.message, 30, 5 + i);
-            drawText(right3(stats.best[i + 10]), brightness.message, 36, 5 + i);
-            drawText(grade(stats.best[i + 10], levels[i + 10].grades), brightness.message, 43, 5 + i);
+        drawBox(brightness.box, 1, 0, 54, 20);
+        drawText("Level Moves Grade      Level Moves Grade", brightness.message, 6, 1);
+        for (let i=0; i<14; ++i) {
+            drawText(right3(i + 1), brightness.message, 7, 3 + i);
+            drawText(right3(stats.best[i]), brightness.message, 13, 3 + i);
+            drawText(grade(stats.best[i], levels[i].grades), brightness.message, 20, 3 + i);
+            if (i + 14 < levels.length) {
+                drawText(right3(i + 15), brightness.message, 30, 3 + i);
+                drawText(right3(stats.best[i + 14]), brightness.message, 36, 3 + i);
+                drawText(grade(stats.best[i + 14], levels[i + 14].grades), brightness.message, 43, 3 + i);
+            }
         }
-        drawText("A: Best known solution, S: Better than lvl author", brightness.message, 3, 17);
+        drawText("A: Best known solution, S: Better than lvl author", brightness.message, 3, 18);
         return;
     }
 
@@ -608,6 +657,7 @@ function onUpdate()
     const simulate = SIMULATE_AT.indexOf(moveDelay) >= 0;
     const prowling = PROWL_AT.indexOf(moveDelay) >= 0;
     let prowled = false;
+    let buttons_hit = 0;
 
     for (let i=0; i<monsters.length; ++i) {
         if ((simulate || prowling) && !gameOver) {
@@ -621,7 +671,7 @@ function onUpdate()
                 if (!simulate) monsters[i].y += dy * 2;
                 prowled = moved = true;
             }
-            if (!simulate && moved && level.data[monsters[i].y][monsters[i].x] == 'B') gatesOpen = !gatesOpen;
+            if (!simulate && moved && level.data[monsters[i].y][monsters[i].x] == 'B') ++buttons_hit;
         }
         if (monsters[i].x == player.x && monsters[i].y == player.y) {
             gameOver = true;
@@ -629,6 +679,7 @@ function onUpdate()
         }
         drawText(glyph.monster, brightness.monster, level.x + monsters[i].x, level.y + monsters[i].y);
     }
+    if (buttons_hit % 2 == 1) gatesOpen = !gatesOpen;
     if (simulate && !prowled) moveDelay = 0;
 
     // Player / Game End Message
@@ -655,8 +706,12 @@ function onInput(key)
         if (is_continue(key)) screen = SCREEN_GAME;
         if (key == 120 || key == 121 || key == 122) {
             cheatBuffer += String.fromCharCode(key);
-            if (cheatBuffer !== "xyzzy".substring(0, cheatBuffer.length)) cheatBuffer = String.fromCharCode(key);
-            if (cheatBuffer.length == 5) stats.maxLevel = levels.length;
+            if (cheatBuffer.length > 5) cheatBuffer = cheatBuffer.substring(cheatBuffer.length - 5, cheatBuffer.length);
+            if (cheatBuffer === "xyzzy") stats.maxLevel = levels.length;
+            if (cheatBuffer === "yxxzx") {
+                resetSavegame();
+                loadLevel();
+            }
         }
         return;
     }
