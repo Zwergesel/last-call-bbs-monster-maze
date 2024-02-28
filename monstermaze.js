@@ -24,6 +24,7 @@ let gates;
 let buttons;
 let player;
 let level;
+let animations;
 let gatesOpen;
 let gameOver;
 let messages = [];
@@ -113,6 +114,38 @@ const levels = [{
 },
 {
     template: [
+        "#-#   #######                      ",
+        "#P#   #. . .#                      ",
+        "# #   # ### #                      ",
+        "#.#   #.# #.#                      ",
+        "# ##### ### #####               ###",
+        "#. . . .G. B . .#               #M#",
+        "############### ################# #",
+        "              #T . . . . . . . . .#",
+        "              #####################",
+    ],
+    grades: [26, 27, 30, 40]
+},
+{
+    template: [
+        "#############",
+        "IM .gB T . P#",
+        "#   ###   ###",
+        "#. .#.#. . .#",
+        "# ### #   # #",
+        "#. . . . .#.#",
+        "#   #   ### #",
+        "#. .#. .#.#.#",
+        "# # #   # # #",
+        "#.#. . . .#.#",
+        "#####     # #",
+        "#. . . . . .#",
+        "#############",
+    ],
+    grades: [48, 52, 58, 68]
+},
+{
+    template: [
         "#####-#######",
         "#.#. M .#T .#",
         "# #   ##### #",
@@ -151,6 +184,26 @@ const levels = [{
 },
 {
     template: [
+        "#######-#####",
+        "#M . .#. . M#",
+        "#   ####### #",
+        "#. P . .#. .#",
+        "###   # # # #",
+        "#. . .#. .#.#",
+        "# ######### #",
+        "#. . . . .#.#",
+        "### ##### # #",
+        "#. . . .#.#.#",
+        "# ##### # # #",
+        "#. .#. .#.#.#",
+        "### ### # # #",
+        "#T . . .#. .#",
+        "#############",
+    ],
+    grades: [60, 64, 70, 80]
+},
+{
+    template: [
         "#############",
         "#. . . . . .#",
         "###         #",
@@ -166,24 +219,6 @@ const levels = [{
         "#############",
     ],
     grades: [34, 36, 42, 60]
-},
-{
-    template: [
-        "#############",
-        "#. . . . . .#",
-        "# ######### #",
-        "#. .#. .#. .#",
-        "# ###   # ###",
-        "#. . . . . .#",
-        "# ####### ###",
-        "I.#. . . . .#",
-        "### ###     #",
-        "#. M#.#. P .#",
-        "# ### ##### #",
-        "#T M . . . .#",
-        "#############",
-    ],
-    grades: [94, 98, 108, 140]
 },
 {
     template: [
@@ -211,6 +246,26 @@ const levels = [{
 },
 {
     template: [
+        "    #####        ",
+        "    #M .#        ",
+        "  ### #########  ",
+        "  #. .#. . . M#  ",
+        "  #   ##### ###  ",
+        "  #. . .#T P T#  ",
+        "  # ### #     #  ",
+        "  #. B#. . . .#  ",
+        "### # #G# ### #  ",
+        "#. .#. . . . .#  ",
+        "# ### ###   #####",
+        "#. . .#. . .#T TI",
+        "### ##### # # ###",
+        "  #. . . .#T T#  ",
+        "  #############  ",
+    ],
+    grades: [53, 56, 61, 70]
+},
+{
+    template: [
         "##### ###############",
         "IM .# #T . . . . . T#",
         "### # ####### #######",
@@ -233,17 +288,21 @@ const levels = [{
 },
 {
     template: [
-        "#-#   #######                      ",
-        "#P#   #. . .#                      ",
-        "# #   # ### #                      ",
-        "#.#   #.# #.#                      ",
-        "# ##### ### #####               ###",
-        "#. . . .G. B . .#               #M#",
-        "############### ################# #",
-        "              #T . . . . . . . . .#",
-        "              #####################",
+        "  ###############  ",
+        "  #. . . . . . .#  ",
+        "####### ##### # ###",
+        "#M . .#. . .#.#. .#",
+        "#     # ### # # # #",
+        "#T . . P .#. . .#.#",
+        "#   ### ##### ### #",
+        "#. . .#. .#. . .#.I",
+        "####### ##### ### #",
+        "  #. . . . . . .#M#",
+        "  ########### ### #",
+        "            #. . .#",
+        "            #######",
     ],
-    grades: [26, 27, 30, 40]
+    grades: [102, 107, 120, 145]
 },
 {
     template: [
@@ -293,6 +352,24 @@ const levels = [{
 },
 {
     template: [
+        "#############",
+        "#. . . . . .#",
+        "# ######### #",
+        "#. .#. .#. .#",
+        "# ###   # ###",
+        "#. . . . . .#",
+        "# ####### ###",
+        "I.#. . . . .#",
+        "### ###     #",
+        "#. M#.#. P .#",
+        "# ### ##### #",
+        "#T M . . . .#",
+        "#############",
+    ],
+    grades: [94, 98, 108, 140]
+},
+{
+    template: [
         "#############-#",
         "#M . . . . .#.#",
         "##### # ### # #",
@@ -305,7 +382,7 @@ const levels = [{
         "#. .#. .#.#.#T#",
         "# ### ##### # #",
         "#. . . . . P .#",
-        "# ###     ### #",
+        "# #######     #",
         "#M . . . . . .#",
         "###############",
     ],
@@ -484,6 +561,12 @@ const brightness = {
     inactiveMessage: 1,
     box: 9
 }
+const explosion = [
+    { duration: 2, symbol: '?', brightness: 14 },
+    { duration: 2, symbol: '&', brightness: 14 },
+    { duration: 2, symbol: '#', brightness: 14 },
+    { duration: 2, symbol: '%', brightness: 14 },
+]
 
 function getName()
 {
@@ -541,6 +624,7 @@ function loadLevel() {
     treasures = [];
     gates = [];
     buttons = [];
+    animations = [];
     player = { x: 1, y : 1 };
     level.data = [];
     gatesOpen = false;
@@ -549,7 +633,7 @@ function loadLevel() {
         for (let x=0; x<level.width; ++x) {
             let symbol = level.template[y][x];
             if (symbol == 'M') {
-                monsters.push({ x: x, y: y, prowl: 0 });
+                monsters.push({ x: x, y: y, dead: false });
                 symbol = glyph.spot;
             } else if (symbol == 'P') {
                 player = { x: x, y: y };
@@ -656,22 +740,32 @@ function onUpdate()
     --moveDelay;
     const simulate = SIMULATE_AT.indexOf(moveDelay) >= 0;
     const prowling = PROWL_AT.indexOf(moveDelay) >= 0;
-    let prowled = false;
-    let buttons_hit = 0;
+    let any_monster_moved = false;
 
     for (let i=0; i<monsters.length; ++i) {
+        if (monsters[i].dead) continue;
         if ((simulate || prowling) && !gameOver) {
             let dx = player.x > monsters[i].x ? 1 : -1;
             let dy = player.y > monsters[i].y ? 1 : -1;
             let moved = false;
             if (monsters[i].x != player.x && is_walkable(level.data[monsters[i].y][monsters[i].x + dx])) {
                 if (!simulate) monsters[i].x += dx * 2;
-                prowled = moved = true;
+                moved = any_monster_moved = true;
             } else if (monsters[i].y != player.y && is_walkable(level.data[monsters[i].y + dy][monsters[i].x])) {
                 if (!simulate) monsters[i].y += dy * 2;
-                prowled = moved = true;
+                moved = any_monster_moved = true;
             }
-            if (!simulate && moved && level.data[monsters[i].y][monsters[i].x] == 'B') ++buttons_hit;
+            // Monsters killing each other and pressing buttons
+            if (prowling) {
+                for (let j=0; j<i; ++j) {
+                    if (!monsters[j].dead && monsters[i].y == monsters[j].y && monsters[i].x == monsters[j].x) {
+                        monsters[i].dead = true;
+                        create_animation(explosion, monsters[i].x, monsters[i].y);
+                        break;
+                    }
+                }
+                if (moved && !monsters[i].dead && level.data[monsters[i].y][monsters[i].x] == 'B') gatesOpen = !gatesOpen;
+            }
         }
         if (monsters[i].x == player.x && monsters[i].y == player.y) {
             gameOver = true;
@@ -679,8 +773,23 @@ function onUpdate()
         }
         drawText(glyph.monster, brightness.monster, level.x + monsters[i].x, level.y + monsters[i].y);
     }
-    if (buttons_hit % 2 == 1) gatesOpen = !gatesOpen;
-    if (simulate && !prowled) moveDelay = 0;
+
+    if (simulate && !any_monster_moved) moveDelay = 0;
+
+    // Animations
+    for (let i=0; i<animations.length; ++i) {
+        const anim = animations[i];
+        drawText(anim.keys[anim.key].symbol, anim.keys[anim.key].brightness, level.x + anim.x, level.y + anim.y);
+        if (--anim.counter <= 0) {
+            ++anim.key;
+            if (anim.key >= anim.keys.length) {
+                animations.splice(i, 1);
+                --i;
+                continue;
+            }
+            anim.counter = anim.keys[anim.key].duration;
+        }
+    }
 
     // Player / Game End Message
     if (gameOver || gameWon) {
@@ -841,4 +950,8 @@ function grade(moves, grades) {
     if (grades.length >= 1 && moves > grades[0]) return "B";
     if (grades.length >= 1 && moves < grades[0]) return "S";
     return "A";
+}
+
+function create_animation(keys, x, y) {
+    animations.push({ x: x, y: y, keys: keys, key: 0, counter: keys[0].duration })
 }
