@@ -10,14 +10,16 @@ TUTORIAL_HEIGHT = 20
 SCREEN_GAME = 1
 SCREEN_STATS = 2
 
-MOVE_DELAY = 13
-SIMULATE_AT = [12, 7]
-PROWL_AT = [8, 1]
+MOVE_DELAY = 14
+WALK_AT = 12
+PROWL_AT = [10, 7, 4, 1]
+SIMULATE_AT = [11, 6]
 
 let screen;
 let stats;
 let moves;
 let moveDelay;
+let lastMove = { x: 0, y: 0 };
 let monsters;
 let treasures;
 let gates;
@@ -717,8 +719,7 @@ function onUpdate()
     // Treasures
     for (let i=0; i<treasures.length; ++i) {
         if (treasures[i].x == player.x && treasures[i].y == player.y) {
-            treasures[i] = treasures[treasures.length - 1];
-            treasures.pop();
+            treasures.splice(i, 1);
             --i;
         } else {
             drawText(glyph.treasure, brightness.treasure, level.x + treasures[i].x, level.y + treasures[i].y);
@@ -736,24 +737,34 @@ function onUpdate()
         drawText(glyph.button, brightness.button, level.x + buttons[i].x, level.y + buttons[i].y);
     }
 
-    // Monsters
+    // Player
     --moveDelay;
+    if (moveDelay == WALK_AT && (lastMove.x != 0 || lastMove.y != 0)) {
+        player.x += lastMove.x;
+        player.y += lastMove.y;
+        lastMove.x = lastMove.y = 0;
+        if (level.data[player.y][player.x] == 'B') gatesOpen = !gatesOpen;
+    }
+
+    // Monsters
     const simulate = SIMULATE_AT.indexOf(moveDelay) >= 0;
     const prowling = PROWL_AT.indexOf(moveDelay) >= 0;
-    let any_monster_moved = false;
+    let anyMonsterMoved = false;
 
     for (let i=0; i<monsters.length; ++i) {
         if (monsters[i].dead) continue;
         if ((simulate || prowling) && !gameOver) {
-            let dx = player.x > monsters[i].x ? 1 : -1;
-            let dy = player.y > monsters[i].y ? 1 : -1;
+            const dx = player.x > monsters[i].x ? 1 : -1;
+            const dy = player.y > monsters[i].y ? 1 : -1;
+            const isHalfstepX = monsters[i].x % 2 == 0;
+            const isHalfstepY = monsters[i].y % 2 == 0;
             let moved = false;
-            if (monsters[i].x != player.x && is_walkable(level.data[monsters[i].y][monsters[i].x + dx])) {
-                if (!simulate) monsters[i].x += dx * 2;
-                moved = any_monster_moved = true;
-            } else if (monsters[i].y != player.y && is_walkable(level.data[monsters[i].y + dy][monsters[i].x])) {
-                if (!simulate) monsters[i].y += dy * 2;
-                moved = any_monster_moved = true;
+            if (isHalfstepX || (monsters[i].x != player.x && is_walkable(level.data[monsters[i].y][monsters[i].x + dx]))) {
+                if (!simulate) monsters[i].x += dx;
+                moved = anyMonsterMoved = true;
+            } else if (isHalfstepY || (monsters[i].y != player.y && is_walkable(level.data[monsters[i].y + dy][monsters[i].x]))) {
+                if (!simulate) monsters[i].y += dy;
+                moved = anyMonsterMoved = true;
             }
             // Monsters killing each other and pressing buttons
             if (prowling) {
@@ -774,7 +785,7 @@ function onUpdate()
         drawText(glyph.monster, brightness.monster, level.x + monsters[i].x, level.y + monsters[i].y);
     }
 
-    if (simulate && !any_monster_moved) moveDelay = 0;
+    if (simulate && !anyMonsterMoved) moveDelay = 0;
 
     // Animations
     for (let i=0; i<animations.length; ++i) {
@@ -857,33 +868,37 @@ function onInput(key)
     if (key == 17) { // Up
         target = level.data[player.y - 1][player.x];
         if (is_walkable(target)) {
-            player.y -= 2;
+            player.y -= 1;
+            lastMove.y = -1;
             moveDelay = MOVE_DELAY;
             ++moves;
         }
     } else if (key == 18) { // Down
         target = level.data[player.y + 1][player.x];
         if (is_walkable(target)) {
-            player.y += 2;
+            player.y += 1;
+            lastMove.y = 1;
             moveDelay = MOVE_DELAY;
             ++moves;
         }
     } else if (key == 19) { // Left
         target = level.data[player.y][player.x - 1];
         if (is_walkable(target)) {
-            player.x -= 2;
+            player.x -= 1;
+            lastMove.x = -1;
             moveDelay = MOVE_DELAY;
             ++moves;
         }
     } else if (key == 20) { // Right
         target = level.data[player.y][player.x + 1];
         if (is_walkable(target)) {
-            player.x += 2;
+            player.x += 1;
+            lastMove.x = 1;
             moveDelay = MOVE_DELAY;
             ++moves;
         }
     } else if (key == 32) { // Space
-        moveDelay = MOVE_DELAY;
+        moveDelay = PROWL_AT[0] + 1; // Faster monster move on skip
         ++moves;
     }
     if (is_exit(target)) {
@@ -898,8 +913,6 @@ function onInput(key)
             messages = ["     You ran away      ", " without the treasure! "];
         }
     }
-    if (is_walkable(target) && level.data[player.y][player.x] == 'B') gatesOpen = !gatesOpen;
-    if (player.x < 0 || player.y < 0 || player.x >= level.width || player.y >= level.height) gameWon = true;
 }
 
 function is_continue(key) {
