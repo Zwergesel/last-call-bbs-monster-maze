@@ -12,7 +12,8 @@ SCREEN_STATS = 2
 
 MOVE_DELAY = 14
 WALK_AT = 12
-PROWL_AT = [10, 7, 4, 1]
+PROWL_AT = [10, 4]
+HALFSTEP_AT = [7, 1]
 SIMULATE_AT = [11, 6]
 
 let screen;
@@ -748,7 +749,8 @@ function onUpdate()
 
     // Monsters
     const simulate = SIMULATE_AT.indexOf(moveDelay) >= 0;
-    const prowling = PROWL_AT.indexOf(moveDelay) >= 0;
+    const halfstep = HALFSTEP_AT.indexOf(moveDelay) >= 0;
+    const prowling = halfstep || PROWL_AT.indexOf(moveDelay) >= 0;
     let anyMonsterMoved = false;
 
     for (let i=0; i<monsters.length; ++i) {
@@ -759,10 +761,10 @@ function onUpdate()
             const isHalfstepX = monsters[i].x % 2 == 0;
             const isHalfstepY = monsters[i].y % 2 == 0;
             let moved = false;
-            if (isHalfstepX || (monsters[i].x != player.x && is_walkable(level.data[monsters[i].y][monsters[i].x + dx]))) {
+            if (isHalfstepX || (!halfstep && monsters[i].x != player.x && is_walkable(level.data[monsters[i].y][monsters[i].x + dx]))) {
                 if (!simulate) monsters[i].x += dx;
                 moved = anyMonsterMoved = true;
-            } else if (isHalfstepY || (monsters[i].y != player.y && is_walkable(level.data[monsters[i].y + dy][monsters[i].x]))) {
+            } else if (isHalfstepY || (!halfstep && monsters[i].y != player.y && is_walkable(level.data[monsters[i].y + dy][monsters[i].x]))) {
                 if (!simulate) monsters[i].y += dy;
                 moved = anyMonsterMoved = true;
             }
