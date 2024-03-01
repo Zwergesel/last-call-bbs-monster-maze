@@ -10,17 +10,24 @@ TUTORIAL_HEIGHT = 20
 SCREEN_GAME = 1
 SCREEN_STATS = 2
 
+REPLAY_START_DELAY = 30;
+REPLAY_DELAY = 15;
 MOVE_DELAY = 14
 WALK_AT = 12
 PROWL_AT = [10, 4]
 HALFSTEP_AT = [7, 1]
 SIMULATE_AT = [11, 6]
 
+MOVE_SYMBOLS = "▲▼<>♦";
+CRYPT_SYMBOLS = "abcdefghijklmnopqrstuvwxyz012345";
+
 let screen;
 let stats;
 let moves;
 let moveDelay;
 let lastMove = { x: 0, y: 0 };
+let replay;
+let replayDelay;
 let monsters;
 let treasures;
 let gates;
@@ -49,7 +56,8 @@ const levels = [{
         "#. . . . P . . . .#",
         "#########-#########",
     ],
-    grades: [8, 9, 10, 12]
+    grades: [8, 9, 10, 12],
+    solution: "un2zm0rsa"
 },
 {
     template: [
@@ -65,7 +73,8 @@ const levels = [{
         "  #. P . . T .I  ",
         "  #############  ",
     ],
-    grades: [20, 22, 26, 32]
+    grades: [20, 22, 26, 32],
+    solution: "jhieriwneoyabqo"
 },
 {
     template: [
@@ -79,7 +88,8 @@ const levels = [{
         "#T . . . . .#",
         "#############",
     ],
-    grades: [16, 17, 20, 24]
+    grades: [16, 17, 20, 24],
+    solution: "txwhshlz2nsgm"
 },
 {
     template: [
@@ -97,7 +107,8 @@ const levels = [{
         "#. . . . .#  ",
         "###########  ",
     ],
-    grades: [28, 32, 36, 50]
+    grades: [28, 32, 36, 50],
+    solution: "iicpgvdzdt0qln1aosh"
 },
 {
     template: [
@@ -113,7 +124,8 @@ const levels = [{
         "#. . . . .#  ",
         "###########  ",
     ],
-    grades: [35, 39, 50, 80]
+    grades: [35, 39, 50, 80],
+    solution: "ylimpfoohozbiooii45kcmo"
 },
 {
     template: [
@@ -127,25 +139,8 @@ const levels = [{
         "              #T . . . . . . . . .#",
         "              #####################",
     ],
-    grades: [26, 27, 30, 40]
-},
-{
-    template: [
-        "#############",
-        "IM .gB T . P#",
-        "#   ###   ###",
-        "#. .#.#. . .#",
-        "# ### #   # #",
-        "#. . . . .#.#",
-        "#   #   ### #",
-        "#. .#. .#.#.#",
-        "# # #   # # #",
-        "#.#. . . .#.#",
-        "#####     # #",
-        "#. . . . . .#",
-        "#############",
-    ],
-    grades: [48, 52, 58, 68]
+    grades: [26, 27, 30, 40],
+    solution: "o5hllxvdfse5inbjbf"
 },
 {
     template: [
@@ -163,7 +158,8 @@ const levels = [{
         "#. . . . . .#",
         "#############",
     ],
-    grades: [54, 58, 64, 76]
+    grades: [54, 58, 64, 76],
+    solution: "l5wesbdde2ebdbwwanbdeqericlopj2b"
 },
 {
     template: [
@@ -183,7 +179,8 @@ const levels = [{
         "      #. . . . P .#M#  ",
         "      #########-#####  ",
     ],
-    grades: [44, 48, 54, 64]
+    grades: [44, 48, 54, 64],
+    solution: "eboebfwj3w0q0gcpilwzcvkaizd"
 },
 {
     template: [
@@ -203,7 +200,8 @@ const levels = [{
         "#T . . .#. .#",
         "#############",
     ],
-    grades: [60, 64, 70, 80]
+    grades: [58, 62, 68, 78],
+    solution: "d3wmfqgldz0vibbdlvi0frc2hfhhpncg3n"
 },
 {
     template: [
@@ -221,7 +219,27 @@ const levels = [{
         "#. .#. . . .#",
         "#############",
     ],
-    grades: [34, 36, 42, 60]
+    grades: [34, 36, 42, 60],
+    solution: "ymgejlsz3wovepdgdc44dx"
+},
+{
+    template: [
+        "#############",
+        "IM .gB T . P#",
+        "#   ###   ###",
+        "#. .#.#. . .#",
+        "# ### #   # #",
+        "#. . . . .#.#",
+        "#   #   ### #",
+        "#. .#. .#.#.#",
+        "# # #   # # #",
+        "#.#. . . .#.#",
+        "#####     # #",
+        "#. . . . . .#",
+        "#############",
+    ],
+    grades: [48, 52, 58, 68],
+    solution: "pfcponibp1yvabxwrhflnsf5pes3m"
 },
 {
     template: [
@@ -245,7 +263,8 @@ const levels = [{
         "#. . .#. . . . . . .#",
         "#####-###############",
     ],
-    grades: [82, 88, 100, 140]
+    grades: [82, 88, 100, 140],
+    solution: "ebxwreen3yy3ebogbnel3j0bonwcimun5qe5cpicr513km"
 },
 {
     template: [
@@ -265,7 +284,8 @@ const levels = [{
         "  #. . . .#T T#  ",
         "  #############  ",
     ],
-    grades: [53, 56, 61, 70]
+    grades: [53, 56, 61, 70],
+    solution: "pggcevhgesh2hpvurggb4wayooysysc0"
 },
 {
     template: [
@@ -287,7 +307,8 @@ const levels = [{
         "            #T M#    ",
         "            #####    ",
     ],
-    grades: [81, 85, 89, 110]
+    grades: [81, 85, 89, 110],
+    solution: "0oelplwz3spdfkcwgapifuevf5jijalia4fye3gey2hlfo"
 },
 {
     template: [
@@ -305,7 +326,8 @@ const levels = [{
         "            #. . .#",
         "            #######",
     ],
-    grades: [102, 107, 120, 145]
+    grades: [102, 107, 120, 145],
+    solution: "obwegbwgd4i505jwtbchcmitkbiwovunjsfbingipbi0340403cuf5ci"
 },
 {
     template: [
@@ -327,7 +349,8 @@ const levels = [{
         "I. . . .#. . . .#",
         "#################",
     ],
-    grades: [101, 105, 113, 140]
+    grades: [101, 105, 113, 140],
+    solution: "obwmememz3adioehplomiyoticjxlpmdhzetp1hmtihoezkzdg52etho"
 },
 {
     template: [
@@ -351,7 +374,8 @@ const levels = [{
         "        #. .#. . .#. .#        ",
         "        ###############        ",
     ],
-    grades: [203, 210, 235, 300]
+    grades: [203, 210, 235, 300],
+    solution: "epiuifihf2hrhowhrqvz5w0yp3lcpaibiwezepieohwe3reyplcwtpwbamyq0ndgmeibdueuekicogjl3r02a3cfjhlz5w0yp3lcp3weo4z"
 },
 {
     template: [
@@ -369,7 +393,8 @@ const levels = [{
         "#T M . . . .#",
         "#############",
     ],
-    grades: [94, 98, 108, 140]
+    grades: [94, 98, 108, 140],
+    solution: "ibiervkhi5hb0gcierhz5wcthhkieglz3vo5pkllrhhhdzox5t1c"
 },
 {
     template: [
@@ -389,7 +414,8 @@ const levels = [{
         "#M . . . . . .#",
         "###############",
     ],
-    grades: [36, 39, 43, 51]
+    grades: [36, 39, 43, 51],
+    solution: "idggmkdndkyyy5whdhn20rh"
 },
 {
     template: [
@@ -411,7 +437,8 @@ const levels = [{
         "#T . . . . . .gM#",
         "#################",
     ],
-    grades: [109, 115, 123, 150]
+    grades: [109, 115, 123, 150],
+    solution: ""
 },
 {
     template: [
@@ -433,7 +460,8 @@ const levels = [{
         "            #.g. . . . .#      ",
         "            #############      ",
     ],
-    grades: [140, 146, 168, 200]
+    grades: [132, 138, 160, 200],
+    solution: "a5fidnxz5wizplcffij2nse5nnghapwd35i5o3ukjlijpxpba5hefac15m0tholoefxnn3t"
 },
 {
     template: [
@@ -455,7 +483,8 @@ const levels = [{
         "IP . . .#. . . .#",
         "#################",
     ],
-    grades: [69, 73, 81, 115]
+    grades: [69, 73, 81, 115],
+    solution: "icheihv0jmivd3uljhlzdjazeluulaoadztxe1ry"
 },
 {
     template: [
@@ -475,7 +504,8 @@ const levels = [{
         "#T .#. . .#. .#. . .#",
         "#####################",
     ],
-    grades: [148, 154, 182, 220]
+    grades: [148, 154, 182, 220],
+    solution: "pgdwtemimrltogiipihbdp0bamodpbwz33ivobppjmvih3l2lnpglecndwa5cgopbavbpti205sxczi"
 },
 {
     template: [
@@ -493,7 +523,8 @@ const levels = [{
         "#. M . . . M#    ",
         "#############    ",
     ],
-    grades: [83, 89, 100, 136]
+    grades: [83, 89, 100, 136],
+    solution: "ibdpaijme1oscchloapn5mlwddiemhwhjzobf2wld111ejx"
 },
 {
     template: [
@@ -515,29 +546,31 @@ const levels = [{
         "          #. . .G. .G. .g. .I",
         "          ###################",
     ],
-    grades: [162, 170, 190, 220]
+    grades: [158, 166, 18, 220],
+    solution: "yfcumhfojzezippigvhemtduygpglvmipyiscbejjvwdoue5eghwrvwmjzjvd2thapbimzdznncptvwfgzzx"
 },
 {
     template: [
-        "###########-#############",
+        "#########################",
         "#T . .#. . . . . . . . .#",
         "##### ###   #     ##### #",
-        "#. . . . . .#. . . .#.#M#",
-        "# ###     # # ###   # # #",
-        "#.#. . . .#. . .#. . .#.#",
+        "#. . . . . .#. . . .#.#.#",
+        "# ###   # # # ###   # # #",
+        "#.#. . .g.#. . .#. . .#M#",
         "# # ### # #   ### # ### #",
-        "#.#. . .#. . P . .#. . .#",
-        "# #   # # ### #   ###   #",
-        "#M#. .#. . . .#. . . . .#",
-        "# ### # #     # # ###   #",
+        "#.#. . .#. . . . .#. . .#",
+        "# ### # # ### #   ###   #",
+        "#M#. .G. .#. P#. . . . .#",
+        "# #   # # #   # # ###   #",
         "#. . .#.#. . . .#. . . .#",
         "# ### # ###   ###   ### #",
         "#. .g.#. .#. . . . .#T#.#",
-        "# ### # ###   ### ### # #",
-        "#. . . B . . .#. .#. . .#",
-        "#########################",
+        "# ### # ###   ###g### #g#",
+        "#. . . B . . .#.G.#. . .#",
+        "###############-#########",
     ],
-    grades: [130, 136, 160, 200]
+    grades: [113, 119, 140, 180],
+    solution: "ildurehbp5kbalccbxehisp50ngejfpmjyy4zoeomhizezovy5eltxwa2ut1p"
 }
 ];
 
@@ -590,7 +623,7 @@ function onConnect()
 function resetSavegame()
 {
     stats = { currentLevel: 0, maxLevel: 0, best: [] }
-    for (let i=0; i<levels.length; ++i) stats.best.push(1000);
+    for (let i=0; i<levels.length; ++i) stats.best.push("");
     save();
 }
 
@@ -616,8 +649,10 @@ function loadLevel() {
         ];
     }
     save();
-    moves = 0;
+    moves = "";
     moveDelay = 0;
+    replay = "";
+    replayDelay = 0;
     level = levels[stats.currentLevel];
     level.height = level.template.length;
     level.width = level.template[0].length;
@@ -705,13 +740,13 @@ function onUpdate()
     drawText("", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 14)
     drawText("Arrow keys: Move", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 15)
     drawText("Space: Wait a turn", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 16)
-    drawText("R: Reset", moves > 0 ? brightness.message : brightness.inactiveMessage, TUTORIAL_X + 1, TUTORIAL_Y + 17)
+    drawText("R: Reset", moves.length > 0 ? brightness.message : brightness.inactiveMessage, TUTORIAL_X + 1, TUTORIAL_Y + 17)
     drawText("S: Stats", brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 17)
     drawText("P: Prev", stats.currentLevel > 0 ? brightness.message : brightness.inactiveMessage, TUTORIAL_X + 1, TUTORIAL_Y + 18)
     drawText("N: Next", stats.currentLevel == stats.maxLevel ? brightness.inactiveMessage : brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 18)
 
     // Level
-    const title = "Level " + format_level(stats.currentLevel + 1) + "  Moves " + left3(moves) + "  Best " + left3(stats.best[stats.currentLevel]);
+    const title = "Level " + format_level(stats.currentLevel + 1) + "  Moves " + left3(moves.length) + "  Best " + left3(stats.best[stats.currentLevel]);
     drawText(title, brightness.title, 0, 0);
     for (let y=0; y<level.height; ++y) {
         drawText(level.data[y], brightness.level, level.x, level.y + y);
@@ -815,6 +850,13 @@ function onUpdate()
     } else {
         drawText(glyph.player, brightness.player, level.x + player.x, level.y + player.y);
     }
+
+    // Replays
+    if (replay.length && --replayDelay <= 0) {
+        replayDelay = REPLAY_DELAY;
+        onPlayerMove(replay[0]);
+        replay = replay.substring(1);
+    }
 }
 
 function onInput(key)
@@ -825,15 +867,31 @@ function onInput(key)
         return;
     }
     if (screen == SCREEN_STATS) {
-        if (is_continue(key)) screen = SCREEN_GAME;
-        if (key == 120 || key == 121 || key == 122) {
-            cheatBuffer += String.fromCharCode(key);
-            if (cheatBuffer.length > 5) cheatBuffer = cheatBuffer.substring(cheatBuffer.length - 5, cheatBuffer.length);
-            if (cheatBuffer === "xyzzy") stats.maxLevel = levels.length;
-            if (cheatBuffer === "yxxzx") {
+        if (is_continue(key)) {
+            screen = SCREEN_GAME;
+            // Cheats
+            if (cheatBuffer === "mummymaze") {
+                stats.maxLevel = levels.length;
+            } else if (cheatBuffer === "forgetmenot") {
                 resetSavegame();
                 loadLevel();
+            } else if (cheatBuffer === "replay") {
+                loadLevel();
+                replay = stats.best[stats.currentLevel];
+                replayDelay = REPLAY_START_DELAY;
+            } else {
+                const info = levels[stats.currentLevel];
+                if (cheatBuffer.length && info.grades.length && info.solution) {
+                    solution = decrypt_solution(info.solution, cheatBuffer, info.grades[0]);
+                    if (solution.length) {
+                        loadLevel();
+                        replay = solution;
+                        replayDelay = REPLAY_START_DELAY;
+                    }
+                }
             }
+        } else if (cheatBuffer.length < 20 && (is_letter(key) || is_number(key))) {
+            cheatBuffer += String.fromCharCode(key);
         }
         return;
     }
@@ -864,49 +922,67 @@ function onInput(key)
         return;
     }
 
+    if (replay.length > 0) {
+        if (key == 10 || key == 27) replay = ""; // Enter or Escape
+        return; // No control during replays
+    }
+
+    // No control during monster moves
     if (moveDelay > 0) return;
 
+    if (key == 17) onPlayerMove('▲'); // Up
+    if (key == 18) onPlayerMove('▼'); // Down
+    if (key == 19) onPlayerMove('<'); // Left
+    if (key == 20) onPlayerMove('>'); // Right
+    if (key == 32) onPlayerMove('♦'); // Space
+}
+
+function onPlayerMove(direction) {
     let target = 'Z';
-    if (key == 17) { // Up
+
+    if (direction == '▲')  { // Up
         target = level.data[player.y - 1][player.x];
         if (is_walkable(target)) {
             player.y -= 1;
             lastMove.y = -1;
             moveDelay = MOVE_DELAY;
-            ++moves;
+            moves += direction;
         }
-    } else if (key == 18) { // Down
+    } else if (direction == '▼') { // Down
         target = level.data[player.y + 1][player.x];
         if (is_walkable(target)) {
             player.y += 1;
             lastMove.y = 1;
             moveDelay = MOVE_DELAY;
-            ++moves;
+            moves += direction;
         }
-    } else if (key == 19) { // Left
+    } else if (direction == '<') { // Left
         target = level.data[player.y][player.x - 1];
         if (is_walkable(target)) {
             player.x -= 1;
             lastMove.x = -1;
             moveDelay = MOVE_DELAY;
-            ++moves;
+            moves += direction;
         }
-    } else if (key == 20) { // Right
+    } else if (direction == '>') { // Right
         target = level.data[player.y][player.x + 1];
         if (is_walkable(target)) {
             player.x += 1;
             lastMove.x = 1;
             moveDelay = MOVE_DELAY;
-            ++moves;
+            moves += direction;
         }
-    } else if (key == 32) { // Space
+    } else if (direction == '♦') { // Space
         moveDelay = PROWL_AT[0] + 1; // Faster monster move on skip
-        ++moves;
+        moves += direction;
     }
+
     if (is_exit(target)) {
         if (treasures.length == 0) {
             gameWon = true;
-            stats.best[stats.currentLevel] = Math.min(stats.best[stats.currentLevel], moves);
+            if (stats.best[stats.currentLevel].length == 0 || moves.length < stats.best[stats.currentLevel].length) {
+                stats.best[stats.currentLevel] = moves;
+            }
             messages = ["    You escaped     ", " with the treasure! "];
             if (stats.currentLevel == stats.maxLevel) stats.maxLevel += 1;
             save();
@@ -917,8 +993,16 @@ function onInput(key)
     }
 }
 
-function is_continue(key) {
+function is_continue(key) { // Space, Enter or Escape
     return key == 32 || key == 10 || key == 27;
+}
+
+function is_letter(key) {
+    return (key >= 65 && key <= 90) || (key >= 97 && key <= 122);
+}
+
+function is_number(key) {
+    return key >= 48 && key <= 57;
 }
 
 function is_wall_or_exit(symbol) {
@@ -944,6 +1028,7 @@ function format_level(number) {
 }
 
 function left3(number) {
+    if (typeof number === "string") number = number.length > 0 ? number.length : 1000;
     if (number < 10) return number + "  ";
     if (number < 100) return number + " ";
     if (number < 1000) return number;
@@ -951,6 +1036,7 @@ function left3(number) {
 }
 
 function right3(number) {
+    if (typeof number === "string") number = number.length > 0 ? number.length : 1000;
     if (number < 10) return "  " + number;
     if (number < 100) return " " + number;
     if (number < 1000) return number;
@@ -958,15 +1044,71 @@ function right3(number) {
 }
 
 function grade(moves, grades) {
-    if (moves > 999) return "-";
-    if (grades.length >= 4 && moves > grades[3]) return "F";
-    if (grades.length >= 3 && moves > grades[2]) return "D";
-    if (grades.length >= 2 && moves > grades[1]) return "C";
-    if (grades.length >= 1 && moves > grades[0]) return "B";
-    if (grades.length >= 1 && moves < grades[0]) return "S";
+    if (moves.length == 0 || moves.length > 999) return "-";
+    if (grades.length >= 4 && moves.length > grades[3]) return "F";
+    if (grades.length >= 3 && moves.length > grades[2]) return "D";
+    if (grades.length >= 2 && moves.length > grades[1]) return "C";
+    if (grades.length >= 1 && moves.length > grades[0]) return "B";
+    if (grades.length >= 1 && moves.length < grades[0]) return "S";
     return "A";
 }
 
 function create_animation(keys, x, y) {
     animations.push({ x: x, y: y, keys: keys, key: 0, counter: keys[0].duration })
 }
+
+function encrypt_solution(solution, cryptkey) {
+    if (solution.length <= 2) return "";
+    cryptkey = shrink_key(cryptkey, Math.ceil(solution.length / 2));
+    let output = "";
+    let checksum = 0;
+    for (let index = 0; (index << 1) < solution.length; ++index) {
+        const first = MOVE_SYMBOLS.indexOf(solution[index << 1]);
+        const second = (index << 1) + 1 < solution.length ? MOVE_SYMBOLS.indexOf(solution[(index << 1) + 1]) : 5;
+        const byte = first + second * 5;
+        checksum = (37 * checksum + byte) & ((1 << 25) - 1);
+        const cryptByte = CRYPT_SYMBOLS.indexOf(cryptkey[index % cryptkey.length]) ^ byte;
+        output += CRYPT_SYMBOLS[cryptByte];
+    }
+    return output += num_to_crypt(checksum, 5);
+}
+
+function decrypt_solution(encrypted, cryptkey, expected_length) {
+    if (encrypted.length <= 6) return "";
+    cryptkey = shrink_key(cryptkey, encrypted.length - 5);
+    let output = "";
+    let checksum = 0;
+    for (let index = 0; index < encrypted.length - 5; ++index) {
+        const cryptByte = CRYPT_SYMBOLS.indexOf(encrypted[index]);
+        const byte = CRYPT_SYMBOLS.indexOf(cryptkey[index % cryptkey.length]) ^ cryptByte;
+        checksum = (37 * checksum + byte) & ((1 << 25) - 1);
+        const first = byte % 5;
+        const second = Math.floor(byte / 5);
+        output += MOVE_SYMBOLS[first];
+        if (second < 5) output += MOVE_SYMBOLS[second];
+    }
+    if (output.length !== expected_length || num_to_crypt(checksum, 5) !== encrypted.substring(encrypted.length - 5, encrypted.length)) {
+        return "";
+    }
+    return output;
+}
+
+function shrink_key(cryptkey, length) {
+    let index = 0;
+    while (cryptkey.length > length) {
+        const mod = CRYPT_SYMBOLS[CRYPT_SYMBOLS.indexOf(cryptkey[index]) ^ CRYPT_SYMBOLS.indexOf(cryptkey[cryptkey.length - 1])];
+        cryptkey = cryptkey.substring(0, index) + mod + cryptkey.substring(index + 1, cryptkey.length - 1);
+        if (++index >= cryptkey.length - 1) index = 0;
+    }
+    return cryptkey;
+}
+
+function num_to_crypt(number, length) {
+    let output = "";
+    while (--length >= 0) {
+        output += CRYPT_SYMBOLS[number % 32];
+        number = Math.floor(number / 32);
+    }
+    return output;
+}
+
