@@ -910,9 +910,6 @@ function onUpdate()
     }
 
     if (simulate && !anyMonsterMoved) {
-        console.log(moves[moves.length - 1]);
-        console.log(moveDelay);
-        console.log(undoSteps);
         if (moves[moves.length - 1] == '♦' && moveDelay == SIMULATE_AT[0] && undoSteps[undoSteps.length - 1][1] == "end") {
             // Don't add a move if waiting and no monster moves
             undoSteps.pop();
@@ -1023,7 +1020,6 @@ function onInput(key)
             loadLevel();
             replay = stats.best[stats.currentLevel];
             replayDelay = REPLAY_START_DELAY;
-            console.log("Replaying: " + replay);
             return;
         }
     }
