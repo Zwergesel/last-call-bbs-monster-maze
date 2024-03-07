@@ -7,6 +7,8 @@ TUTORIAL_Y = 0;
 TUTORIAL_WIDTH = 20;
 TUTORIAL_HEIGHT = 20;
 
+SAVEGAME_VERSION = 2;
+
 SCREEN_GAME = 1;
 SCREEN_STATS = 2;
 
@@ -659,6 +661,9 @@ function onConnect()
     savegame = loadData();
     if (savegame) {
         stats = JSON.parse(savegame);
+        if (!stats.version || stats.version != SAVEGAME_VERSION) {
+            resetSavegame();
+        }
     } else {
         resetSavegame();
     }
@@ -667,7 +672,7 @@ function onConnect()
 
 function resetSavegame()
 {
-    stats = { currentLevel: 0, maxLevel: 0, best: [] }
+    stats = { version: SAVEGAME_VERSION, currentLevel: 0, maxLevel: 0, best: [] }
     for (let i=0; i<levels.length; ++i) stats.best.push("");
     save();
 }
