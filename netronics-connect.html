@@ -16,14 +16,21 @@
   <script language="JavaScript" type="text/javascript" src="monstermaze.js"></script>
   <style>
     @font-face {
-      src: url('CatV6x129Normal.ttf') format('truetype');
-      font-family: 'CatV6x129Normal';
+      src: url('JuliaMono-Regular.woff2');
+      font-family: 'JuliaMono';
+      font-weight: normal;
+      font-style: normal;
+    }
+    @font-face {
+      src: url('CatV6x129Normal.ttf');
+      font-family: 'CatV6x129';
       font-weight: normal;
       font-style: normal;
     }
 
     :root {
-      --font: 'CatV6x129Normal';
+      --font-1: 'CatV6x129';
+      --font-2: 'JuliaMono';
       --color-0: #192f30;
       --color-1: #2a4546;
       --color-2: #2e4a4b;
@@ -110,7 +117,7 @@
       outline: thin solid var(--color-17);
       background-color: var(--color-0);
       color: var(--color-17);
-      font-family: var(--font), monospace;
+      font-family: var(--font-1), var(--font-2), monospace;
       min-width: 56ch;
       display: grid;
       grid-template-columns: repeat(56, 1fr);
