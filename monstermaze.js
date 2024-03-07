@@ -771,24 +771,24 @@ function onUpdate()
     drawText("Brave adventurer,", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 1)
     drawText("collect all", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 2)
     drawText("diamonds (" + glyph.treasure + ") and", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 3)
-    drawText("escape through", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 4)
-    drawText("the door.", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 5)
-    drawText("Monsters (" + glyph.monster + ") move", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 6)
-    drawText("2 spaces after", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 7)
-    drawText("you move. They", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 8)
-    drawText("only move closer", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 9)
-    drawText("to you and prefer", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 10)
-    drawText("horizontal moves.", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 11)
-    drawText("Buttons (" + glyph.button + ") toggle", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 12)
-    drawText("gates (═══).", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 13)
-    drawText("═", gatesOpen ? brightness.gateOpen : brightness.gateClosed, TUTORIAL_X + 9, TUTORIAL_Y + 13)
+    drawText("escape through the", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 4)
+    drawText("door. Monsters (" + glyph.monster + ")", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 5)
+    drawText("move 2 spaces each", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 6)
+    drawText("turn after you.", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 7)
+    drawText("They only come", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 8)
+    drawText("closer to you and", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 9)
+    drawText("prefer horizontal", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 10)
+    drawText("moves. Buttons (" + glyph.button + ")", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 11)
+    drawText("flip gates (═══).", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 12)
+    drawText("═", gatesOpen ? brightness.gateOpen : brightness.gateClosed, TUTORIAL_X + 14, TUTORIAL_Y + 12)
     drawText("", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 14)
-    drawText("Arrow keys: Move", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 15)
-    drawText("Space: Wait a turn", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 16)
-    drawText("R: Reset", moves.length > 0 ? brightness.message : brightness.inactiveMessage, TUTORIAL_X + 1, TUTORIAL_Y + 17)
-    drawText("S: Stats", brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 17)
-    drawText("P: Prev", stats.currentLevel > 0 ? brightness.message : brightness.inactiveMessage, TUTORIAL_X + 1, TUTORIAL_Y + 18)
-    drawText("N: Next", stats.currentLevel == stats.maxLevel ? brightness.inactiveMessage : brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 18)
+    drawText("Arrow keys: Move", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 14)
+    drawText("Space: Wait a turn", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 15)
+    drawText("R: Reset", moves.length > 0 ? brightness.message : brightness.inactiveMessage, TUTORIAL_X + 1, TUTORIAL_Y + 16)
+    drawText("S: Stats", brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 16)
+    drawText("P: Prev", stats.currentLevel > 0 ? brightness.message : brightness.inactiveMessage, TUTORIAL_X + 1, TUTORIAL_Y + 17)
+    drawText("N: Next", stats.currentLevel == stats.maxLevel ? brightness.inactiveMessage : brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 17)
+    drawText("X: Replay solution", stats.best[stats.currentLevel].length ? brightness.message : brightness.inactiveMessage, TUTORIAL_X + 1, TUTORIAL_Y + 18)
 
     // Level
     const title = "Level " + format_level(stats.currentLevel + 1) + "  Moves " + left3(moves.length) + "  Best " + left3(stats.best[stats.currentLevel]);
@@ -925,10 +925,6 @@ function onInput(key)
             } else if (cheatBuffer === "forgetmenot") {
                 resetSavegame();
                 loadLevel();
-            } else if (cheatBuffer === "replay") {
-                loadLevel();
-                replay = stats.best[stats.currentLevel];
-                replayDelay = REPLAY_START_DELAY;
             } else {
                 const info = levels[stats.currentLevel];
                 if (cheatBuffer.length && info.grades.length && info.solution) {
@@ -963,6 +959,11 @@ function onInput(key)
     if (key == 114 || key == 82) { // R
         loadLevel();
         return;
+    }
+    if ((key == 120 || key == 88) && stats.best[stats.currentLevel].length) { // X
+        loadLevel();
+        replay = stats.best[stats.currentLevel];
+        replayDelay = REPLAY_START_DELAY;
     }
     if (gameWon || gameOver) {
         if (is_continue(key)) {
