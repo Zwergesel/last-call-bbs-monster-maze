@@ -1,22 +1,22 @@
-PLAYAREA_WIDTH = 35
-PLAYAREA_HEIGHT = 20
-PLAYAREA_X = 0
-PLAYAREA_Y = 1
-TUTORIAL_X = 36
-TUTORIAL_Y = 0
-TUTORIAL_WIDTH = 20
-TUTORIAL_HEIGHT = 20
+PLAYAREA_WIDTH = 35;
+PLAYAREA_HEIGHT = 20;
+PLAYAREA_X = 0;
+PLAYAREA_Y = 1;
+TUTORIAL_X = 36;
+TUTORIAL_Y = 0;
+TUTORIAL_WIDTH = 20;
+TUTORIAL_HEIGHT = 20;
 
-SCREEN_GAME = 1
-SCREEN_STATS = 2
+SCREEN_GAME = 1;
+SCREEN_STATS = 2;
 
 REPLAY_START_DELAY = 30;
 REPLAY_DELAY = 15;
-MOVE_DELAY = 14
-WALK_AT = 12
-PROWL_AT = [10, 4]
-HALFSTEP_AT = [7, 1]
-SIMULATE_AT = [11, 6]
+MOVE_DELAY = 14;
+WALK_AT = 12;
+PROWL_AT = [10, 4];
+HALFSTEP_AT = [7, 1];
+SIMULATE_AT = [11, 6];
 
 MOVE_SYMBOLS = "▲▼<>♦";
 CRYPT_SYMBOLS = "abcdefghijklmnopqrstuvwxyz012345";
@@ -25,7 +25,9 @@ let screen;
 let stats;
 let moves;
 let moveDelay;
-let lastMove = { x: 0, y: 0 };
+let lastMove;
+let undoCounter;
+let undoSteps;
 let replay;
 let replayDelay;
 let replayBlink = true;
@@ -694,6 +696,8 @@ function loadLevel() {
     save();
     moves = "";
     moveDelay = 0;
+    undoCounter = 0;
+    undoSteps = [];
     replay = "";
     replayDelay = 0;
     level = levels[stats.currentLevel];
@@ -701,6 +705,7 @@ function loadLevel() {
     level.width = level.template[0].length;
     level.x = PLAYAREA_X + Math.floor((PLAYAREA_WIDTH - level.width) / 2);
     level.y = PLAYAREA_Y + Math.floor((PLAYAREA_HEIGHT - level.height) / 2);
+    lastMove = { x: 0, y: 0 };
     monsters = [];
     treasures = [];
     gates = [];
@@ -785,21 +790,45 @@ function onUpdate()
     drawText("Arrow keys: Move", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 14)
     drawText("Space: Wait a turn", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 15)
     drawText("R: Reset", moves.length > 0 ? brightness.message : brightness.inactiveMessage, TUTORIAL_X + 1, TUTORIAL_Y + 16)
-    drawText("S: Stats", brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 16)
+    drawText("U: Undo", moves.length > 0 ? brightness.message : brightness.inactiveMessage, TUTORIAL_X + 11, TUTORIAL_Y + 16)
     drawText("P: Prev", stats.currentLevel > 0 ? brightness.message : brightness.inactiveMessage, TUTORIAL_X + 1, TUTORIAL_Y + 17)
     drawText("N: Next", stats.currentLevel == stats.maxLevel ? brightness.inactiveMessage : brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 17)
-    drawText("X: Replay solution", stats.best[stats.currentLevel].length ? brightness.message : brightness.inactiveMessage, TUTORIAL_X + 1, TUTORIAL_Y + 18)
+    drawText("X: Replay", stats.best[stats.currentLevel].length ? brightness.message : brightness.inactiveMessage, TUTORIAL_X + 1, TUTORIAL_Y + 18)
+    drawText("S: Stats", brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 18)
 
     // Level
-    const title = "Level " + format_level(stats.currentLevel + 1) + "  Moves " + left3(moves.length) + "  Best " + left3(stats.best[stats.currentLevel]);
-    drawText(title, brightness.title, 0, 0);
     for (let y=0; y<level.height; ++y) {
         drawText(level.data[y], brightness.level, level.x, level.y + y);
     }
 
+    // Undos
+    while (undoCounter > 0 && undoCounter == undoSteps[undoSteps.length - 1][0]) {
+        const undoStep = undoSteps.pop();
+        if (undoStep[1] == "player") {
+            player.x = undoStep[2];
+            player.y = undoStep[3];
+        } else if (undoStep[1] == "treasure") {
+            treasures.push({ x: player.x, y: player.y });
+        } else if (undoStep[1] == "gates") {
+            gatesOpen = !gatesOpen;
+        } else if (undoStep[1] == "monster") {
+            const i = undoStep[2];
+            monsters[i].x = undoStep[3];
+            monsters[i].y = undoStep[4];
+            monsters[i].dead = false;
+        } else if (undoStep[1] == "end") {
+            moves = moves.substring(0, moves.length - 1);
+            undoCounter = 0;
+        } else if (undoStep[1] == "fastforward") {
+            undoCounter = undoStep[2];
+        }
+    }
+    if (undoCounter > 0) ++undoCounter;
+
     // Treasures
     for (let i=0; i<treasures.length; ++i) {
         if (treasures[i].x == player.x && treasures[i].y == player.y) {
+            undoSteps.push([moveDelay, "treasure"]);
             treasures.splice(i, 1);
             --i;
         } else {
@@ -819,12 +848,16 @@ function onUpdate()
     }
 
     // Player
-    --moveDelay;
+    if (moveDelay > 0) --moveDelay;
     if (moveDelay == WALK_AT && (lastMove.x != 0 || lastMove.y != 0)) {
+        undoSteps.push([moveDelay, "player", player.x, player.y]);
         player.x += lastMove.x;
         player.y += lastMove.y;
         lastMove.x = lastMove.y = 0;
-        if (level.data[player.y][player.x] == 'B') gatesOpen = !gatesOpen;
+        if (level.data[player.y][player.x] == 'B') {
+            undoSteps.push([moveDelay, "gates"]);
+            gatesOpen = !gatesOpen;
+        }
     }
 
     // Monsters
@@ -836,6 +869,7 @@ function onUpdate()
     for (let i=0; i<monsters.length; ++i) {
         if (monsters[i].dead) continue;
         if ((simulate || prowling) && !gameOver) {
+            if (prowling) undoSteps.push([moveDelay, "monster", i, monsters[i].x, monsters[i].y]);
             const dx = player.x > monsters[i].x ? 1 : -1;
             const dy = player.y > monsters[i].y ? 1 : -1;
             const isHalfstepX = monsters[i].x % 2 == 0;
@@ -857,17 +891,32 @@ function onUpdate()
                         break;
                     }
                 }
-                if (moved && !monsters[i].dead && level.data[monsters[i].y][monsters[i].x] == 'B') gatesOpen = !gatesOpen;
+                if (moved && !monsters[i].dead && level.data[monsters[i].y][monsters[i].x] == 'B') {
+                    undoSteps.push([moveDelay, "gates"]);
+                    gatesOpen = !gatesOpen;
+                }
             }
         }
-        if (monsters[i].x == player.x && monsters[i].y == player.y) {
+        if (undoCounter <= 0 && (monsters[i].x == player.x && monsters[i].y == player.y)) {
             gameOver = true;
             messages = [" You were eaten by a grue! "];
         }
         drawText(glyph.monster, brightness.monster, level.x + monsters[i].x, level.y + monsters[i].y);
     }
 
-    if (simulate && !anyMonsterMoved) moveDelay = 0;
+    if (simulate && !anyMonsterMoved) {
+        console.log(moves[moves.length - 1]);
+        console.log(moveDelay);
+        console.log(undoSteps);
+        if (moves[moves.length - 1] == '♦' && moveDelay == SIMULATE_AT[0] && undoSteps[undoSteps.length - 1][1] == "end") {
+            // Don't add a move if waiting and no monster moves
+            undoSteps.pop();
+            moves = moves.substring(0, moves.length - 1);
+        } else {
+            undoSteps.push([1, "fastforward", moveDelay]);
+        }
+        moveDelay = 0;
+    }
 
     // Animations
     for (let i=0; i<animations.length; ++i) {
@@ -907,6 +956,10 @@ function onUpdate()
             replay = replay.substring(1);
         }
     }
+
+    // Info Bar
+    const title = "Level " + format_level(stats.currentLevel + 1) + "  Moves " + left3(moves.length) + "  Best " + left3(stats.best[stats.currentLevel]);
+    drawText(title, brightness.title, 0, 0);
 }
 
 function onInput(key)
@@ -960,11 +1013,23 @@ function onInput(key)
         loadLevel();
         return;
     }
-    if ((key == 120 || key == 88) && stats.best[stats.currentLevel].length) { // X
-        loadLevel();
-        replay = stats.best[stats.currentLevel];
-        replayDelay = REPLAY_START_DELAY;
+    if (key == 120 || key == 88) { // X
+        if (stats.best[stats.currentLevel].length) {
+            loadLevel();
+            replay = stats.best[stats.currentLevel];
+            replayDelay = REPLAY_START_DELAY;
+            console.log("Replaying: " + replay);
+            return;
+        }
     }
+    if (key == 117 || key == 85) { // U
+        if (!gameWon && undoCounter <= 0 && moveDelay <= 0 && moves.length > 0) {
+            undoCounter = 1;
+            gameOver = false;
+            return;
+        }
+    }
+
     if (gameWon || gameOver) {
         if (is_continue(key)) {
             if (gameWon) stats.currentLevel += 1;
@@ -978,8 +1043,8 @@ function onInput(key)
         return; // No control during replays
     }
 
-    // No control during monster moves
-    if (moveDelay > 0) return;
+    // No control during monster moves or undos
+    if (moveDelay > 0 || undoCounter > 0) return;
 
     if (key == 17) onPlayerMove('▲'); // Up
     if (key == 18) onPlayerMove('▼'); // Down
@@ -993,38 +1058,31 @@ function onPlayerMove(direction) {
 
     if (direction == '▲')  { // Up
         target = level.data[player.y - 1][player.x];
-        if (is_walkable(target)) {
-            player.y -= 1;
-            lastMove.y = -1;
-            moveDelay = MOVE_DELAY;
-            moves += direction;
-        }
+        lastMove.y = -1;
     } else if (direction == '▼') { // Down
         target = level.data[player.y + 1][player.x];
-        if (is_walkable(target)) {
-            player.y += 1;
-            lastMove.y = 1;
-            moveDelay = MOVE_DELAY;
-            moves += direction;
-        }
+        lastMove.y = 1;
     } else if (direction == '<') { // Left
         target = level.data[player.y][player.x - 1];
-        if (is_walkable(target)) {
-            player.x -= 1;
-            lastMove.x = -1;
-            moveDelay = MOVE_DELAY;
-            moves += direction;
-        }
+        lastMove.x = -1;
     } else if (direction == '>') { // Right
         target = level.data[player.y][player.x + 1];
-        if (is_walkable(target)) {
-            player.x += 1;
-            lastMove.x = 1;
-            moveDelay = MOVE_DELAY;
-            moves += direction;
-        }
-    } else if (direction == '♦') { // Space
-        moveDelay = PROWL_AT[0] + 1; // Faster monster move on skip
+        lastMove.x = 1;
+    }
+
+    if (is_walkable(target)) {
+        moveDelay = MOVE_DELAY;
+        undoSteps.push([moveDelay, "end"], [moveDelay, "player", player.x, player.y]);
+        player.x += lastMove.x;
+        player.y += lastMove.y;
+        moves += direction;
+    } else {
+        lastMove.x = lastMove.y = 0;
+    }
+
+    if (direction == '♦') { // Space
+        moveDelay = SIMULATE_AT[0] + 1; // Faster monster move on skip
+        undoSteps.push([moveDelay, "end"]);
         moves += direction;
     }
 
