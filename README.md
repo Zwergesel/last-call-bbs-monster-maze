@@ -18,7 +18,7 @@ You can also play the game in a [simulated _Netronics Connect!_ terminal](https:
 
 ![Preview](https://i.imgur.com/S5hFiVc.jpg)
 
-The game contains 28 levels in which you must wander through the maze and collect all diamonds without being eaten by a monster. The monsters move two spaces after each of your moves but they are stupid and only want to move either horizontally or vertically closer to you. If both are possible, they prefer horizontal moves. If neither are possible because there are walls in the way, they don't move at all.
+The game contains 30 levels in which you must wander through the maze and collect all diamonds without being eaten by a monster. The monsters move two spaces after each of your moves but they are stupid and only want to move either horizontally or vertically closer to you. If both are possible, they prefer horizontal moves. If neither are possible because there are walls in the way, they don't move at all.
 
 In later levels there are also locked gates which can be opened by the walking onto switches, both by the player and the monsters. Switches can be triggered multiple times and will always close all open gates and open all closed gates simultaneously.
 
@@ -32,3 +32,4 @@ Your progress is saved automatically.
 
 - July 27, 2022: Version 1 of Monster Maze is released
 - March 7, 2024: Version 2 of Monster Maze is released
+- April 29, 2024: Version 3 of Monster Maze is released

@@ -7,7 +7,7 @@ TUTORIAL_Y = 0;
 TUTORIAL_WIDTH = 20;
 TUTORIAL_HEIGHT = 20;
 
-SAVEGAME_VERSION = 2;
+SAVEGAME_VERSION = 4;
 
 SCREEN_GAME = 1;
 SCREEN_STATS = 2;
@@ -20,7 +20,7 @@ PROWL_AT = [10, 4];
 HALFSTEP_AT = [7, 1];
 SIMULATE_AT = [11, 6];
 
-MOVE_SYMBOLS = "▲▼<>♦";
+MOVE_SYMBOLS = "^v<>x";
 CRYPT_SYMBOLS = "abcdefghijklmnopqrstuvwxyz012345";
 
 let screen;
@@ -46,6 +46,25 @@ let messages = [];
 let cheatBuffer = "";
 
 const levels = [{
+    template: [
+        "#################",
+        "#P . . . . . . M#",
+        "### ####### #####",
+        "  #.#     #.#    ",
+        "  # ##### # ###  ",
+        "  #T T T# #. .#  ",
+        "  ##### # ### ###",
+        "      #.#   #. .#",
+        "      # ##### ###",
+        "      #. . T T T#",
+        "      ######### #",
+        "          I. . .#",
+        "          #######",
+    ],
+    grades: [14, 16, 18, 20],
+    solution: "tvs10pigtoei"
+},
+{
     template: [
         "    ###########    ",
         "    #. . . . .#    ",
@@ -575,26 +594,26 @@ const levels = [{
 },
 {
     template: [
-        "  ###################        ",
-        "  #. .G. . .G. . . .#        ",
-        "### #####g######### #        ",
-        "#T .#. B . .#. . B#.#        ",
-        "#   #       # ##### #        ",
-        "#. .#. . . P .#.#. .#        ",
-        "#######     ### #g###        ",
-        "  #T .#. B .g. . .G.#        ",
-        "  #   #   ###G# ### #######  ",
-        "  #M .g. .G.#.#.#. .#.#. T#  ",
-        "  ######### # # #   # #   #  ",
-        "    #T .#. .#.GB#. .G.#. .#  ",
-        "    #   #   ###g###g# #G###  ",
-        "    #. .g. . .#.#B .#B .#    ",
-        "    #########g# #   #########",
-        "          #. . .G. .G. .g. .I",
-        "          ###################",
+        "  #################          ",
+        "  #. .G. . .G. . .#          ",
+        "### #####g####### #######    ",
+        "#T .#. B . .#. B#. .#. T#    ",
+        "#   #       # ##### #   #    ",
+        "#. .#. . . . .g. .g.#. .#    ",
+        "#######     ###   ###G#g###  ",
+        "  #T .#. B Pg. . .G. .#. T#  ",
+        "  #   #   ###G# ###   #   #  ",
+        "  #M .g. .G.#.#.#. . .#. .#  ",
+        "  ######### # # ### ###G#####",
+        "    #T .#. .#.GB#.#.g. Bg. .#",
+        "    #   #   ###g# #g#   #   #",
+        "    #. .g. . .#.#B .#B .#. T#",
+        "    #########g# #   #####G###",
+        "          I. . .G. .g. . .#  ",
+        "          #################  ",
     ],
-    grades: [158, 166, 180, 220],
-    solution: "ylmumhfojzezippimxlimtduyliglvmip5crc2owrvcldte5eghwrvwnizjvd2thapjiavdznncptvwb0mfi"
+    grades: [183, 190, 215, 240],
+    solution: "0lchacenevkrcnwlnmd1jscd0fhemvedispsibicbawlau0bafooslihe30b0fmdemm1a4ysynlpfngojppb0cdibaiqwrq2i"
 },
 {
     template: [
@@ -618,6 +637,31 @@ const levels = [{
     ],
     grades: [139, 145, 170, 205],
     solution: "ildurihbpszbhfdciave3ykdipoemjcmjveyzoegdgiodyov0bwedfhb4wevolwhdvczhfc252w"
+},
+{
+    template: [
+        "#########   #########   #########",
+        "#M . . .#   #. . . .#   #. T . M#",
+        "# ### # #####   # ###   #####   #",
+        "#. . .#. . . . .#. .#   #. . . .#",
+        "# ##### ##### ##### ##### ### # #",
+        "IP . . .#   #. . .#M . . . .#.#.#",
+        "# ### ###   ###   # #####   # ###",
+        "#. . . .#   #. . . .#   #. . . .#",
+        "### #####   ##### ###   ##### ###",
+        "  #.#           #.#         #.#  ",
+        "### #####   ##### ###   ##### ###",
+        "#. . . .#   #. .#.#.#   #. .#.#.#",
+        "# #######   ### # # ##### ### # #",
+        "#.#. T .#   #. . . . . . . . . .#",
+        "# ### ######### ### #####   ### #",
+        "#T . .#. . . . . .#.#   #. .#T .#",
+        "###   # #####   ### #   ### ### #",
+        "#. . . M#   #. . . M#   #. . . M#",
+        "#########   #########   #########",
+    ],
+    grades: [251, 259, 300, 400],
+    solution: "52moriwehnybfbvwtvdnhvkzekpsrhglzmhbyfcemjghdvoyo4hlrvm0fse5ihxhrpwn5ygrcbidplplepyq05juanel4sc5dmhwavu13rlcolcipap334ktcpidp2kk33x"
 }
 ];
 
@@ -762,17 +806,16 @@ function onUpdate()
     if (screen == SCREEN_STATS) {
         drawBox(brightness.box, 1, 0, 54, 20);
         drawText("Level Moves Grade      Level Moves Grade", brightness.message, 6, 1);
-        for (let i=0; i<14; ++i) {
+        for (let i=0; i<15; ++i) {
             drawText(right3(i + 1), brightness.message, 7, 3 + i);
             drawText(right3(stats.best[i]), brightness.message, 13, 3 + i);
             drawText(grade(stats.best[i], levels[i].grades), brightness.message, 20, 3 + i);
-            if (i + 14 < levels.length) {
-                drawText(right3(i + 15), brightness.message, 30, 3 + i);
-                drawText(right3(stats.best[i + 14]), brightness.message, 36, 3 + i);
-                drawText(grade(stats.best[i + 14], levels[i + 14].grades), brightness.message, 43, 3 + i);
+            if (i + 15 < levels.length) {
+                drawText(right3(i + 16), brightness.message, 30, 3 + i);
+                drawText(right3(stats.best[i + 15]), brightness.message, 36, 3 + i);
+                drawText(grade(stats.best[i + 15], levels[i + 15].grades), brightness.message, 43, 3 + i);
             }
         }
-        drawText("A: Best known solution, S: Better than lvl author", brightness.message, 3, 18);
         return;
     }
 
@@ -800,6 +843,7 @@ function onUpdate()
     drawText("N: Next", stats.currentLevel == stats.maxLevel ? brightness.inactiveMessage : brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 17)
     drawText("X: Replay", stats.best[stats.currentLevel].length ? brightness.message : brightness.inactiveMessage, TUTORIAL_X + 1, TUTORIAL_Y + 18)
     drawText("S: Stats", brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 18)
+    drawText(glyph.treasure, brightness.treasure, TUTORIAL_X + 11, TUTORIAL_Y + 3)
 
     // Level
     for (let y=0; y<level.height; ++y) {
@@ -910,7 +954,7 @@ function onUpdate()
     }
 
     if (simulate && !anyMonsterMoved) {
-        if (moves[moves.length - 1] == '♦' && moveDelay == SIMULATE_AT[0] && undoSteps[undoSteps.length - 1][1] == "end") {
+        if (moves[moves.length - 1] == 'x' && moveDelay == SIMULATE_AT[0] && undoSteps[undoSteps.length - 1][1] == "end") {
             // Don't add a move if waiting and no monster moves
             undoSteps.pop();
             moves = moves.substring(0, moves.length - 1);
@@ -950,7 +994,7 @@ function onUpdate()
     // Replays
     if (replay.length) {
         drawBox(brightness.box, PLAYAREA_X + PLAYAREA_WIDTH - 3, PLAYAREA_Y, 3, 3);
-        if (replayBlink) drawText("R", brightness.message, PLAYAREA_X + PLAYAREA_WIDTH - 2, PLAYAREA_Y + 1);
+        drawText(replayBlink ? "R" : " ", brightness.message, PLAYAREA_X + PLAYAREA_WIDTH - 2, PLAYAREA_Y + 1);
         if (--replayDelay <= 0) {
             replayDelay = REPLAY_DELAY;
             replayBlink = !replayBlink;
@@ -960,8 +1004,12 @@ function onUpdate()
     }
 
     // Info Bar
-    const title = "Level " + format_level(stats.currentLevel + 1) + "  Moves " + left3(moves.length) + "  Best " + left3(stats.best[stats.currentLevel]);
+    const title = "Lvl " + format_level(stats.currentLevel + 1) +
+        "  Move " + left3(moves.length) +
+        "  Best " + left3(stats.best[stats.currentLevel]) +
+        "   " + glyph.treasure + " " + treasures.length;
     drawText(title, brightness.title, 0, 0);
+    drawText(glyph.treasure, brightness.treasure, 32, 0)
 }
 
 function onInput(key)
@@ -1047,20 +1095,20 @@ function onInput(key)
     // No control during monster moves or undos
     if (moveDelay > 0 || undoCounter > 0) return;
 
-    if (key == 17) onPlayerMove('▲'); // Up
-    if (key == 18) onPlayerMove('▼'); // Down
+    if (key == 17) onPlayerMove('^'); // Up
+    if (key == 18) onPlayerMove('v'); // Down
     if (key == 19) onPlayerMove('<'); // Left
     if (key == 20) onPlayerMove('>'); // Right
-    if (key == 32) onPlayerMove('♦'); // Space
+    if (key == 32) onPlayerMove('x'); // Space
 }
 
 function onPlayerMove(direction) {
     let target = 'Z';
 
-    if (direction == '▲')  { // Up
+    if (direction == '^')  { // Up
         target = level.data[player.y - 1][player.x];
         lastMove.y = -1;
-    } else if (direction == '▼') { // Down
+    } else if (direction == 'v') { // Down
         target = level.data[player.y + 1][player.x];
         lastMove.y = 1;
     } else if (direction == '<') { // Left
@@ -1081,7 +1129,7 @@ function onPlayerMove(direction) {
         lastMove.x = lastMove.y = 0;
     }
 
-    if (direction == '♦') { // Space
+    if (direction == 'x') { // Space
         moveDelay = SIMULATE_AT[0] + 1; // Faster monster move on skip
         undoSteps.push([moveDelay, "end"]);
         moves += direction;
@@ -1098,7 +1146,7 @@ function onPlayerMove(direction) {
             save();
         } else {
             gameOver = true;
-            messages = ["     You ran away      ", " without the treasure! "];
+            messages = [" You did not collect ", "  all the treasure!  "];
         }
     }
 }
