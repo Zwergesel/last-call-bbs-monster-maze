@@ -4,13 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NETronics Connect! On-Line</title>
+  <title>Monster Maze</title>
   <link rel="icon" type="image/png" href="favicon.png">
-  <meta property="og:title" content="NETronics Connect! On-Line">
+  <meta property="og:title" content="Monster Maze">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://zwergesel.github.io/last-call-bbs-monster-maze/netronics-connect.html" />
   <meta property="og:locale" content="en_US">
-  <meta name="description" property="og:description" content="Play Last Call BBS custom servers in the browser!">
+  <meta name="description" property="og:description" content="A Sawayama Powerlance Z5 emulator for the game Monster Maze">
   <meta name="twitter:card" content="summary">
   <meta name="theme-color" content="#b11a2a">
   <script language="JavaScript" type="text/javascript" src="monstermaze.js"></script>
@@ -180,11 +180,13 @@
           for (let i = 0; i < terminal.width; i++) {
             const char = terminal.buffer_current[j][i][0]
             const color = terminal.buffer_current[j][i][1]
-            if (char !== terminal.buffer_previous[j][i][0] || color !== terminal.buffer_previous[j][i][1]) {
+            const el = terminal.grid[j][i]
+            if (char !== terminal.buffer_previous[j][i][0]) {
               terminal.buffer_previous[j][i][0] = char
+              el.textContent = char.replace('⚉', '☹')
+            }
+            if (color !== terminal.buffer_previous[j][i][1]) {
               terminal.buffer_previous[j][i][1] = color
-              const el = terminal.grid[j][i]
-              el.innerText = char.replace('⚉', '☹')
               el.style.color = 'var(--color-' + color + ')'
             }
           }
