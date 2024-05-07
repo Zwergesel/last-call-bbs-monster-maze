@@ -183,7 +183,7 @@
             const el = terminal.grid[j][i]
             if (char !== terminal.buffer_previous[j][i][0]) {
               terminal.buffer_previous[j][i][0] = char
-              el.textContent = char.replace('⚉', '☹')
+              el.textContent = char.replace('⚉', 'ӝ') // ӭӝӜ
             }
             if (color !== terminal.buffer_previous[j][i][1]) {
               terminal.buffer_previous[j][i][1] = color
