@@ -7,7 +7,7 @@ TUTORIAL_Y = 0;
 TUTORIAL_WIDTH = 20;
 TUTORIAL_HEIGHT = 20;
 
-SAVEGAME_VERSION = 5;
+SAVEGAME_VERSION = 9;
 
 SCREEN_GAME = 1;
 SCREEN_STATS = 2;
@@ -45,23 +45,26 @@ let gameOver;
 let messages = [];
 let cheatBuffer = "";
 
-const levels = [{
+const levels = [
+{
     template: [
-        "#################",
-        "#P . . . . . . M#",
-        "### ####### #####",
-        "  #.#     #.#    ",
-        "  # ##### # ###  ",
-        "  #T T T# #. .#  ",
-        "  ##### # ### ###",
-        "      #.#   #. .#",
-        "      # ##### ###",
-        "      #. . T T T#",
-        "      ######### #",
-        "          I. . .#",
-        "          #######",
+        "  you       a monster",
+        "   v             v   ",
+        "  #################  ",
+        "  #P . . . . . . M#  ",
+        "  ### ####### #####  ",
+        "    #.#     #.#      ",
+        "    # ##### # ###    ",
+        "    #T T T# #. .#    ",
+        "    ##### # ### ###  ",
+        "     ^  #.#   #. .#  ",
+        "   ;ems # ##### ###  ",
+        "        #. . T T T#  ",
+        "        ######### #  ",
+        "     exit > I. . .#  ",
+        "            #######  ",
     ],
-    grades: [14, 16, 18, 20],
+    grades: [14, 16, 18],
     solution: "tvs10pigtoei"
 },
 {
@@ -80,7 +83,7 @@ const levels = [{
         "#. . . . P . . . .#",
         "#########-#########",
     ],
-    grades: [8, 9, 10, 12],
+    grades: [8, 10, 12],
     solution: "un2zm0rsa"
 },
 {
@@ -97,7 +100,7 @@ const levels = [{
         "  #. P . . T .I  ",
         "  #############  ",
     ],
-    grades: [20, 22, 26, 32],
+    grades: [20, 22, 24],
     solution: "jhieriwneoyabqo"
 },
 {
@@ -112,7 +115,7 @@ const levels = [{
         "#T . . . . .#",
         "#############",
     ],
-    grades: [16, 17, 20, 24],
+    grades: [16, 18, 20],
     solution: "txwhshlz2nsgm"
 },
 {
@@ -131,7 +134,7 @@ const levels = [{
         "#. . . . .#  ",
         "###########  ",
     ],
-    grades: [27, 32, 36, 50],
+    grades: [27, 29, 33],
     solution: "iicpgvdzbp0tluxmq5s"
 },
 {
@@ -148,42 +151,8 @@ const levels = [{
         "#. . . . .#  ",
         "###########  ",
     ],
-    grades: [35, 39, 50, 80],
+    grades: [35, 37, 41],
     solution: "ylimpfoohozbiooii45kcmo"
-},
-{
-    template: [
-        "#-#   #######                      ",
-        "#P#   #. . .#                      ",
-        "# #   # ### #                      ",
-        "#.#   #.# #.#                      ",
-        "# ##### ### #####               ###",
-        "#. . . .G. B . .#               #M#",
-        "############### ################# #",
-        "              #T . . . . . . . . .#",
-        "              #####################",
-    ],
-    grades: [26, 27, 30, 40],
-    solution: "o5hllxvdfse5inbjbf"
-},
-{
-    template: [
-        "###############",
-        "#. . . .#. . .#",
-        "# ##### # ### #",
-        "#. B .#. .#. .#",
-        "#     #g# #   #",
-        "#. . .#.#. . T#",
-        "# ### # # #   #",
-        "#. . . .#.#. .#",
-        "#   ##### ### #",
-        "#. . . P . . .#",
-        "#       #     #",
-        "IM . . .#. . .#",
-        "###############",
-    ],
-    grades: [50, 52, 58, 66],
-    solution: "a5egmndme4dzh5uuofghitfvog1jyg"
 },
 {
     template: [
@@ -203,8 +172,42 @@ const levels = [{
         "      #. . . . P .#M#  ",
         "      #########-#####  ",
     ],
-    grades: [44, 48, 54, 64],
+    grades: [44, 46, 50],
     solution: "eboebfwj3w0q0gcpilwzcvkaizd"
+},
+{
+    template: [
+        "#-#   #######                      ",
+        "#P#   #. . .#                      ",
+        "# #   # ### #                      ",
+        "#.#   #.# #.#                      ",
+        "# ##### ### #####               ###",
+        "#. . . .G. B . .#               #M#",
+        "############### ################# #",
+        "              #T . . . . . . . . .#",
+        "              #####################",
+    ],
+    grades: [26, 28, 30],
+    solution: "o5hllxvdfse5inbjbf"
+},
+{
+    template: [
+        "###########",
+        "#. . . . P#",
+        "# #####   #",
+        "#. B#. . .#",
+        "#   # ### #",
+        "#. .g. T .#",
+        "### #     #",
+        "  #.#. . M#",
+        "  # ### ###",
+        "  I.#. .#  ",
+        "  # ### #  ",
+        "  #. . .#  ",
+        "  #######  ",
+    ],
+    grades: [45, 47, 51],
+    solution: "ebucfvilp204zfdwgnoh5ysgnbxe"
 },
 {
     template: [
@@ -222,7 +225,7 @@ const levels = [{
         "#. . . . . .#",
         "#############",
     ],
-    grades: [40, 42, 48, 56],
+    grades: [40, 42, 46],
     solution: "1bpifxuo33cwagkijhle42tsy"
 },
 {
@@ -241,27 +244,162 @@ const levels = [{
         "#. .#. . . .#",
         "#############",
     ],
-    grades: [34, 36, 42, 60],
+    grades: [34, 36, 38],
     solution: "ymgejlsz3wovepdgdc44dx"
 },
 {
     template: [
-        "#####-###############  ",
-        "#. .#. . . . . . M .#  ",
-        "# # #   ####### ### ###",
-        "#.#. . M . . .#T T T#.#",
-        "# ###     #   ###   # #",
-        "#. . . . .#. . . . . .#",
-        "#     ### ###     ### #",
-        "#. . . . . . . . . .#.#",
-        "### #   # ### ####### #",
-        "#. .#. .#. .#. . . . .#",
-        "# ### ### ###   ### ###",
-        "#. . . . . . . P . .#  ",
-        "#####################  "
+        "#######-###",
+        "#. . M . .#",
+        "###   #   #",
+        "#.#. .#. .#",
+        "# # ##### #",
+        "#. .#. . M#",
+        "# # ###   #",
+        "#.#. . . T#",
+        "### ### ###",
+        "#. .#. . .#",
+        "#   ##### #",
+        "#P . . . .#",
+        "###########",
     ],
-    grades: [43, 46, 52, 64],
-    solution: "gbeopfbnhz0bf5elrnghdfhhyl4"
+    grades: [44, 48, 66],
+    solution: "55kgdhwh4mysokmiskglpm0vd3v"
+},
+{
+    template: [
+        "  ###########  ",
+        "  #. PG. . .#  ",
+        "  # ##### ###  ",
+        "  #.#B .#.#.#  ",
+        "### # ### # ###",
+        "I. . . .#T . .#",
+        "### ### # # ###",
+        "  #.#. . .#.#  ",
+        "  ##### ### #  ",
+        "  #. . . . M#  ",
+        "  ###########  ",
+    ],
+    grades: [46, 50, 54],
+    solution: "p3bgmvjhionrn3bblepbazetgyg5"
+},
+{
+    template: [
+        "###########-#######",
+        "#. . . . . . . . .#",
+        "# #   ### #   ### #",
+        "#.#. .#. .#. . . .#",
+        "# #   # # # # ### #",
+        "#. . . .#. .#. .#M#",
+        "# ##### # # # # # #",
+        "#. .#.#. .#. .#. .#",
+        "# # # #   # # ### #",
+        "#.#.#. . . T#. . M#",
+        "### ############# #",
+        "#. P . . . . . . .#",
+        "###################",
+    ],
+    grades: [32, 34, 36],
+    solution: "ipectbsz3m0zkkeexj1hl"
+},
+{
+    template: [
+        "###############",
+        "#. . . . . . T#",
+        "#   ### # #####",
+        "#. .#. .#. . .#",
+        "# ###   #     #",
+        "#. . . .#. . .#",
+        "# ###   # ### #",
+        "#. .#. .#. M#.#",
+        "### # # ##### #",
+        "#. . .#. . .#.#",
+        "#   ###     # #",
+        "#. .#.#. . .#.#",
+        "# ### # ### # #",
+        "#. . . . P . .#",
+        "#########-#####",
+    ],
+    grades: [78, 82, 90],
+    solution: "knoidbw1jo0tihgutbch32crpkdeafez3meuolutzg2a"
+},
+{
+    template: [
+        "#############-#",
+        "#M . . . . .#.#",
+        "##### # ### # #",
+        "#. .#.#.#. .#T#",
+        "# # # ##### # #",
+        "#.#. . .#.#.#T#",
+        "# ### # # # # #",
+        "#. . .#. . .#T#",
+        "### ### # # # #",
+        "#. .#. .#.#.#T#",
+        "# ### ##### # #",
+        "#. . . . . P .#",
+        "# #######     #",
+        "#M . . . . . .#",
+        "###############",
+    ],
+    grades: [35, 38, 45],
+    solution: "idggmkdnd1au05wed4kuc5j"
+},
+{
+    template: [
+        "#############",
+        "IM .gB T . P#",
+        "#   ###   ###",
+        "#. .#.#. . .#",
+        "# ### #   # #",
+        "#. . . . .#.#",
+        "#   #   ### #",
+        "#. .#. .#.#.#",
+        "# # #   # # #",
+        "#.#. . . .#.#",
+        "#####     # #",
+        "#. . . . . .#",
+        "#############",
+    ],
+    grades: [48, 51, 58],
+    solution: "pfcponibp1yvabxwrhflnsf5pes3m"
+},
+{
+    template: [
+        "    ###########  ",
+        "    #. . . . .#  ",
+        "##### #####   #  ",
+        "#. T#.#. . . .#  ",
+        "#   # ###     ###",
+        "#. . .#. . P . .I",
+        "#   ###   ### ###",
+        "#. . M . .#T .#  ",
+        "### # # # #   #  ",
+        "#. .#.#.#.#. .#  ",
+        "#   ####### ###  ",
+        "#. M . . . M#    ",
+        "#############    ",
+    ],
+    grades: [83, 85, 93],
+    solution: "ibdpaijme1oscchloapn5mlwddiemhwhjzobf2wld111ejx"
+},
+{
+    template: [
+        "#############",
+        "I. . . . .#.#",
+        "# ### ### # #",
+        "#P .#. .#. .#",
+        "# ##### ### #",
+        "#. . . . . .#",
+        "# ### ### # #",
+        "#.#. . . .#.#",
+        "### # ### # #",
+        "#T#.#.#. .#.#",
+        "# ### # ### #",
+        "#. M . . . .#",
+        "#############",
+    ],
+    grades: [51, 55, 59],
+    solution: "yfwpceogfuz1akcirlbzm3czcwsl4za"
 },
 {
     template: [
@@ -285,7 +423,7 @@ const levels = [{
         "#. . .#. . . . . . .#",
         "#####-###############",
     ],
-    grades: [82, 88, 100, 140],
+    grades: [82, 86, 94],
     solution: "ebxwreen3yy3ebogbnel3j0bonwcimun5qe5cpicr513km"
 },
 {
@@ -306,46 +444,25 @@ const levels = [{
         "#T . . .#. .#",
         "#############",
     ],
-    grades: [58, 62, 68, 78],
+    grades: [58, 60, 66],
     solution: "d3wmfqgldz0vibbdlvi0frc2hfhhpncg3n"
 },
 {
     template: [
-        "#############",
-        "IM .gB T . P#",
-        "#   ###   ###",
-        "#. .#.#. . .#",
-        "# ### #   # #",
-        "#. . . . .#.#",
-        "#   #   ### #",
-        "#. .#. .#.#.#",
-        "# # #   # # #",
-        "#.#. . . .#.#",
-        "#####     # #",
-        "#. . . . . .#",
-        "#############",
+        "  #######################  ",
+        "  I. . . . . . . . . . .#  ",
+        "### # # ### ##### ### # ###",
+        "#. .#.#. .#T T T . . .#. .#",
+        "# # ### # # # ### # ### # #",
+        "#P#.#. .#. T#T T .#. .#.#M#",
+        "# # # ### # # # ### # # # #",
+        "#. .#.#. .#T T#T . .#.#. .#",
+        "### # # ### ### ##### # ###",
+        "  #. . . . . . . . . . .#  ",
+        "  #######################  ",
     ],
-    grades: [48, 52, 58, 68],
-    solution: "pfcponibp1yvabxwrhflnsf5pes3m"
-},
-{
-    template: [
-        "  #############  ",
-        "  #M .#. . . M#  ",
-        "  #   ##### ###  ",
-        "  #. . .#T . T#  ",
-        "  # ### #     #  ",
-        "  #. B#. . . .#  ",
-        "### # #G# ### #  ",
-        "#. .#. P . . .#  ",
-        "# ### ###   #####",
-        "#. . .#. . .#T TI",
-        "### ##### # # ###",
-        "  #. . . .#T T#  ",
-        "  #############  ",
-    ],
-    grades: [51, 54, 59, 68],
-    solution: "kldwakpharhrz3bwcfo0hwdvlr3gjkh"
+    grades: [44, 48, 58],
+    solution: "hicrail15ryqa3eeelijdsta3jv"
 },
 {
     template: [
@@ -367,90 +484,90 @@ const levels = [{
         "            #T M#    ",
         "            #####    ",
     ],
-    grades: [81, 85, 89, 110],
+    grades: [81, 85, 91],
     solution: "0oelplwz3spdfkcwgapifuevf5jijalia4fye3gey2hlfo"
 },
 {
     template: [
-        "  ###############  ",
-        "  #. . . . . . .#  ",
-        "####### ##### # ###",
-        "#M . .#. . .#.#. .#",
-        "#     # ### # # # #",
-        "#T . . P .#. . .#.#",
-        "#   ### ##### ### #",
-        "#. . .#. .#. . .#.I",
-        "####### ##### ### #",
-        "  #. . . . . . .#M#",
-        "  ########### ### #",
-        "            #. . .#",
-        "            #######",
+        "### ### ### ### ### ###",
+        "#T# #M# #T# #T# #M# #T#",
+        "# ### ### # # ### ### #",
+        "#. . . . .# #. . . . .#",
+        "### ### ### ### #G# ###",
+        "  #.#.G.#     #.#.#.#  ",
+        "  # # # ####### # # #  ",
+        "  #.#.#. . . . .#.#.#  ",
+        "  # ### ####### #G# #  ",
+        "  #.#.G.#. . .#.#.#.#  ",
+        "  # # # # #G# # # # #  ",
+        "  #.G.#.#.#B#.#.#.G.#  ",
+        "  # ### # # # # ### #  ",
+        "  #. . .G.#P#.G. . .#  ",
+        "  #########-#########  ",
     ],
-    grades: [102, 107, 120, 145],
-    solution: "obwegbwgd4i505jwtbchcmitkbiwovunjsfbingipbi0340403cuf5ci"
+    grades: [134, 144, 158],
+    solution: "ifugjap0mrad0necfnelczd5khibrvbmjyl2a3goemviawytihbwrcdnjuitfkccbncli250"
 },
 {
     template: [
-        "    ###########  ",
-        "    #. . . . .#  ",
-        "##### #####   #  ",
-        "#. T#.#. . . .#  ",
-        "#   # ###     ###",
-        "#. . .#. . P . .I",
-        "#   ###   ### ###",
-        "#. . M . .#T .#  ",
-        "### # # # #   #  ",
-        "#. .#.#.#.#. .#  ",
-        "#   ####### ###  ",
-        "#. M . . . M#    ",
-        "#############    ",
+        "#########-###############",
+        "#. . . . . . . . . . .GM#",
+        "# ### ###       ##### ###",
+        "#. .#.#.#. B . . . .#. .#",
+        "### # # #         # ### #",
+        "#M#. .#. . . . P .#. .#M#",
+        "# # ###     #     # # # #",
+        "#. .#. . . .#. T . .#. .#",
+        "# # # ### ###   ### # ###",
+        "#.#. . . . . . . .#. . .#",
+        "# # # #######   # # ### #",
+        "#.#.#.#. . . . .#. . .#.#",
+        "# ### #   # ### # # ### #",
+        "#. . . . M#. . . .#. M .#",
+        "#########################",
     ],
-    grades: [83, 89, 100, 136],
-    solution: "ibdpaijme1oscchloapn5mlwddiemhwhjzobf2wld111ejx"
+    grades: [7, 8, 9],
+    solution: "zbqsu2bca"
 },
 {
     template: [
-        "#-#################",
-        "#M#. . . . . . . .#",
-        "# #     #######   #",
-        "#.#. . .#T . M . .#",
-        "# # #   # #####   #",
-        "#. .#. . . . .#. .#",
-        "# ### ### ##### ###",
-        "#. . .#. . .#. . .#",
-        "#     ###   #     #",
-        "#. . P . . . . . .#",
-        "# #####   # ##### #",
-        "#. . . . .#. . . .#",
-        "# #####   # ###   #",
-        "#. . .#. . .#. . .#",
-        "# ### ###   ### # #",
-        "#. . . .gB . . .#.#",
-        "###################",
+        "  #############  ",
+        "  #M .#. . . M#  ",
+        "  #   ##### ###  ",
+        "  #. . .#T . T#  ",
+        "  # ### #     #  ",
+        "  #. B#. . . .#  ",
+        "### # #G# ### #  ",
+        "#. .#. P . . .#  ",
+        "# ### ###   #####",
+        "#. . .#. . .#T TI",
+        "### ##### # # ###",
+        "  #. . . .#T T#  ",
+        "  #############  ",
     ],
-    grades: [85, 89, 97, 111],
-    solution: "aaidrxghp3lt05mclmch3sz5epehahwzhszbcbkpef3i5ixm"
+    grades: [51, 53, 59],
+    solution: "kldwakpharhrz3bwcfo0hwdvlr3gjkh"
 },
 {
     template: [
-        "#############-#",
-        "#M . . . . .#.#",
-        "##### # ### # #",
-        "#. .#.#.#. .#T#",
-        "# # # ##### # #",
-        "#.#. . .#.#.#T#",
-        "# ### # # # # #",
-        "#. . .#. . .#T#",
-        "### ### # # # #",
-        "#. .#. .#.#.#T#",
-        "# ### ##### # #",
-        "#. . . . . P .#",
-        "# #######     #",
-        "#M . . . . . .#",
-        "###############",
+        "  #############",
+        "  #. . . . . .#",
+        "  # ##### ### #",
+        "  #. . .#.#. .#",
+        "### ### # #   #",
+        "#. . .#. .g. .#",
+        "#     #   # ###",
+        "#. T . . . . .I",
+        "#     #   ### #",
+        "#. . .#. . B .#",
+        "### ###   # ###",
+        "  #. . P .#. .#",
+        "  # ### # ### #",
+        "  #. . .#. M .#",
+        "  #############",
     ],
-    grades: [35, 38, 43, 51],
-    solution: "idggmkdnd1au05wed4kuc5j"
+    grades: [96, 98, 104],
+    solution: "dplebvuda445elbmixhzo3dddpigceoeh3h1dmhoplcn530qcowvd"
 },
 {
     template: [
@@ -468,8 +585,94 @@ const levels = [{
         "#T M . . . .#",
         "#############",
     ],
-    grades: [94, 98, 108, 140],
+    grades: [94, 97, 105],
     solution: "ibiervkhi5hb0gcierhz5wcthhkieglz3vo5pkllrhhhdzox5t1c"
+},
+{
+    template: [
+        "  ###############  ",
+        "  #. . . . . . .#  ",
+        "####### ##### # ###",
+        "#M . .#. . .#.#. .#",
+        "#     # ### # # # #",
+        "#T . . P .#. . .#.#",
+        "#   ### ##### ### #",
+        "#. . .#. .#. . .#.I",
+        "####### ##### ### #",
+        "  #. . . . . . .#M#",
+        "  ########### ### #",
+        "            #. . .#",
+        "            #######",
+    ],
+    grades: [102, 107, 120],
+    solution: "obwegbwgd4i505jwtbchcmitkbiwovunjsfbingipbi0340403cuf5ci"
+},
+{
+    template: [
+        "#################################",
+        "#. . T#. T#. .#T#.G.g.G.g.G.g.GM#",
+        "# # ### ###g# # # ###############",
+        "#.#. .G. . .#. .#. .#         #.#",
+        "# ####### ### ##### #         # #",
+        "#.#T . . .G.#.g. .#.#         #B#",
+        "# ### ### # ##### # #         # #",
+        "#. T#.#T .#. .#T .#.#         #M#",
+        "# ### ###g### ### # #         # #",
+        "#P . .#. .#T . .G.#.#         #.#",
+        "# ### # ##### ### # #         # #",
+        "#. .#. .G.#. . T .#.#         #B#",
+        "### ##### # # ##### ######### # #",
+        "#T . .G. . .#. . . . . . . .I #.#",
+        "############################# ###",
+    ],
+    grades: [81, 83, 89],
+    solution: "hkwesvmd4mcqecbgeaoeishu0fpmepih3mlbp5ww51hcil"
+},
+{
+    template: [
+        "###############",
+        "#. .#. . M#. T#",
+        "# ### ### # ###",
+        "#. . . .#. . .#",
+        "# ##### ##### #",
+        "#.#P . . .#.#.#",
+        "# ##### # # # #",
+        "#.#. .#.#. .#.#",
+        "# ### # ### ###",
+        "#.#. . . . . .#",
+        "### #   # ### #",
+        "#. .#. .#. .#.I",
+        "# # # # # ### #",
+        "#.#. .#. . . .#",
+        "###   # ##### #",
+        "#. . . . . . .#",
+        "###############",
+    ],
+    grades: [69, 71, 77],
+    solution: "0lcpokiimw01cplojtgz5rp1jhgitbc1cmrjou1g"
+},
+{
+    template: [
+        "#################",
+        "#. . .#.#. . . .#",
+        "# # ### # ##### #",
+        "#.#.#T#.#. .#.#T#",
+        "# # # # # # # # #",
+        "#.#. . .#.#. . .#",
+        "# #     # ### ###",
+        "#.#. . .#. . .#.#",
+        "# ### ##### ### #",
+        "#. . . .#. . . .#",
+        "# ##### # ##### #",
+        "#. . . . .#. M .#",
+        "# # ##### ### ###",
+        "IP#. . M#. . .#T#",
+        "### ##### ### # #",
+        "#T . . . . .#. .#",
+        "#################",
+    ],
+    grades: [120, 128, 150],
+    solution: "i5egjkm1m1ouaohgdvj025euofdgbhca3oo4eavwmphaf2krcnvtpbc1jpiutxisz"
 },
 {
     template: [
@@ -493,8 +696,77 @@ const levels = [{
         "        #. .#. . .#. .#        ",
         "        ###############        ",
     ],
-    grades: [188, 195, 225, 280],
+    grades: [188, 196, 220],
     solution: "ehiuifibd2hrhowlrqvd3w0yp3lcpmghiwezkbeemewhezevflwurpwbaw020ndgmeibdueuekicogjl3rlbalmmbneeh3zmwm1"
+},
+{
+    template: [
+        "#####-###########",
+        "#. . . . M .#T#M#",
+        "# ### #     # # #",
+        "#. . .#. . . . .#",
+        "### # # ###   # #",
+        "#.#.#. .#. . .#.#",
+        "# ###   #   ### #",
+        "#. . . .#. . .#.#",
+        "# #   ### #   ###",
+        "#.#. . . .#. . .#",
+        "###     # #   # #",
+        "#. . . .#. . .#.#",
+        "#   #   ### # ###",
+        "#. P#. . . .#. T#",
+        "# # ### ### #   #",
+        "#T#. . . .#. . .#",
+        "#################",
+    ],
+    grades: [65, 67, 71],
+    solution: "hbceavmip1pv0lvhbaibp5lte2wwtcghu3voqe"
+},
+{
+    template: [
+        "  #######-#############",
+        "  #. . . P . . . . . .#",
+        "  # ### # #######   ###",
+        "  #. .#.#.#. . . . .#.#",
+        "  # ### # #   # ### # #",
+        "  #. . .#. . B#.#. . .#",
+        "  # ####### # # #   ###",
+        "  #. . . . .#. . . .#  ",
+        "####### ### # #G### #  ",
+        "#T T T#.#.#. .#. .#.#  ",
+        "#     # # ##### # # #  ",
+        "#T . Tg.#. . . .#. M#  ",
+        "#     # #   #   ### #  ",
+        "#T T T#. . .#. . . .#  ",
+        "#####################  ",
+    ],
+    grades: [108, 112, 120],
+    solution: "oficdvl15oitc2iiemdlkol2ofiirvlemvove2wuofianzet03ewjhosxsl"
+},
+{
+    template: [
+        "#############                ",
+        "I. . . .#. .#                ",
+        "# ### # # # ###########      ",
+        "#. .#.#. .#M . . . . .#      ",
+        "# ### ### # ######### #      ",
+        "#. . .#T .#.#       #.#      ",
+        "# #   # ### # ####### #######",
+        "#.#. P . . .# #. . . . . . .#",
+        "############# ### ##### #####",
+        "              #.#. T#. .#. .#",
+        "############# # ##### ##### #",
+        "#. .#. . .#.# #. . . . . . M#",
+        "# ### # ### # ####### #######",
+        "#.#. .#. . .#       #.#      ",
+        "# # ### ### ######### #      ",
+        "#. . . T#. . . . . . .#      ",
+        "### ### ### ###########      ",
+        "#. . . . . M#                ",
+        "#############                ",
+    ],
+    grades: [131, 133, 140],
+    solution: "ckellbwiam0ve3gwlaleczpvicljeachd2eve1wwavwip3k0ilmdpvlbpserpgpej2twiof"
 },
 {
     template: [
@@ -518,31 +790,8 @@ const levels = [{
         "    #. M . . . . . . .#    ",
         "    ###################    ",
     ],
-    grades: [169, 175, 200, 240],
+    grades: [169, 175, 185],
     solution: "homjfmikn4zvynlhiac13o55cbigdhez3m0dfpiiplcnjo0b0biibhel3m0bokgdpxd1cp0thcljeacndse5twdwk5"
-},
-{
-    template: [
-        "#################",
-        "#. . .#.#. . . .#",
-        "# # ### # ##### #",
-        "#.#.#T#.#. .#.#T#",
-        "# # # # # # # # #",
-        "#.#. . .#.#. . .#",
-        "# #     # ### ###",
-        "#.#. . .#. . .#.#",
-        "# ### ##### ### #",
-        "#. . . .#. . M .#",
-        "# ##### # ##### #",
-        "#. . . . .#. . .#",
-        "# ####### # # ###",
-        "#. . . . . .#T M#",
-        "#   ### # ###   #",
-        "IP . . .#. . . .#",
-        "#################",
-    ],
-    grades: [69, 73, 81, 115],
-    solution: "icheihv0jmivd3uljhlzdjazeluulaoadztxe1ry"
 },
 {
     template: [
@@ -562,7 +811,7 @@ const levels = [{
         "#T .#. . .#. .#. . .#",
         "#####################",
     ],
-    grades: [148, 154, 182, 220],
+    grades: [148, 154, 166],
     solution: "pgdwtemimrltogiipihbdp0bamodpbwz33ivobppjmvih3l2lnpglecndwa5cgopbavbpti205sxczi"
 },
 {
@@ -585,7 +834,7 @@ const levels = [{
         "            #.g.G. . . .#      ",
         "            #############      ",
     ],
-    grades: [130, 136, 160, 200],
+    grades: [130, 138, 150],
     solution: "y5fidnx13wizplmcoqiklserjhllmxuzh4cuoftgplgjkzyblchcebu13mi2lcodbkmjlo"
 },
 {
@@ -608,7 +857,7 @@ const levels = [{
         "#. . . . . .#. . .#.#",
         "#####################",
     ],
-    grades: [76, 80, 92, 106],
+    grades: [76, 80, 86],
     solution: "a3mcewwhd4lqi5mmrbd1b2nukneeimugmmibyl3knkl"
 },
 {
@@ -631,7 +880,7 @@ const levels = [{
         "          I. . .G. .g. . .#  ",
         "          #################  ",
     ],
-    grades: [183, 190, 215, 240],
+    grades: [183, 190, 220],
     solution: "0lchacenevkrcnwlnmd1jscd0fhemvedispsibicbawlau0bafooslihe30b0fmdemm1a4ysynlpfngojppb0cdibaiqwrq2i"
 },
 {
@@ -656,32 +905,9 @@ const levels = [{
         "#. . . M#   #. . . M#   #. . . M#",
         "#########   #########   #########",
     ],
-    grades: [251, 259, 300, 400],
+    grades: [251, 261, 301],
     solution: "52moriwehnybfbvwtvdnhvkzekpsrhglzmhbyfcemjghdvoyo4hlrvm0fse5ihxhrpwn5ygrcbidplplepyq05juanel4sc5dmhwavu13rlcolcipap334ktcpidp2kk33x"
 },
-// {
-//     template: [
-//         "#########################",
-//         "#T . .#. . . . . . . . .#",
-//         "##### ### #   ###   ### #",
-//         "#. . . . .#. .g. . .#. .#",
-//         "# ###   # #   #G#   # ###",
-//         "#.#. . .#.#. . .#. .#.#M#",
-//         "# # ### # #   ### # # # #",
-//         "#M#. . .#. . . . .#. . .#",
-//         "# ### # # ### ### ###   #",
-//         "#. . .G. . . P#. . . . .#",
-//         "#     # ###   # # ###   #",
-//         "#. . .#. .#. . .#. . . .#",
-//         "# ### #   #   ###   ### #",
-//         "#. .g.#. .#. . . . .#T#.#",
-//         "# ### # ###   ###g### #g#",
-//         "#. . . B . . .#.G.#. . .#",
-//         "###############-#########",
-//     ],
-//     grades: [139, 145, 170, 205],
-//     solution: "ildurihbpszbhfdciave3ykdipoemjcmjveyzoegdgiodyov0bwedfhb4wevolwhdvczhfc252w"
-// },
 ];
 
 const glyph = {
@@ -692,10 +918,13 @@ const glyph = {
     spot: ".",
     button: "*",
     baseWall: "#",
-    walls: "╬║═╝═╚═╩║║╗╣╔╠╦╬"
+    walls: "╬║═╝═╚═╩║║╗╣╔╠╦╬",
+    star: "*",
+    blank: ".",
 }
 const brightness = {
     level: 10,
+    spot: 7,
     player: 15,
     monster: 12,
     treasure: 16,
@@ -704,8 +933,9 @@ const brightness = {
     button: 14,
     title: 11,
     message: 12,
-    inactiveMessage: 1,
-    box: 9
+    inactive: 4,
+    box: 9,
+    star: 12,
 }
 const explosion = [
     { duration: 2, symbol: '?', brightness: 14 },
@@ -753,7 +983,7 @@ function loadLevel() {
         gameOver = true;
         messages = [
             " With your pockets full of ",
-            "  diamonds you close the   ",
+            "  treasure you close the   ",
             "  final door behind you... ",
             "                           ",
             "   You have completed the  ",
@@ -798,6 +1028,10 @@ function loadLevel() {
             } else if (symbol == 'B') {
                 buttons.push({ x: x, y: y });
                 symbol = 'B';
+            } else if (symbol == '.') {
+                symbol = glyph.spot;
+            } else if (symbol == ';') {
+                symbol = 'g';
             } else if (glyph.walls.indexOf(symbol) >= 0) {
                 // keep symbol
             } else if (is_wall(symbol) || symbol == 'G' || symbol == 'g') {
@@ -823,16 +1057,23 @@ function onUpdate()
     clearScreen();
 
     if (screen == SCREEN_STATS) {
-        drawBox(brightness.box, 1, 0, 54, 20);
-        drawText("Level Moves Grade      Level Moves Grade", brightness.message, 6, 1);
-        for (let i=0; i<15; ++i) {
-            drawText(right3(i + 1), brightness.message, 7, 3 + i);
-            drawText(right3(stats.best[i]), brightness.message, 13, 3 + i);
-            drawText(grade(stats.best[i], levels[i].grades), brightness.message, 20, 3 + i);
-            if (i + 15 < levels.length) {
-                drawText(right3(i + 16), brightness.message, 30, 3 + i);
-                drawText(right3(stats.best[i + 15]), brightness.message, 36, 3 + i);
-                drawText(grade(stats.best[i + 15], levels[i + 15].grades), brightness.message, 43, 3 + i);
+        drawBox(brightness.box, 1, 0, 54, 19);
+        drawText("Lvl Mov Rank      Lvl Mov Rank      Lvl Mov Rank", brightness.message, 4, 1);
+        for (let i=0; i<14; ++i) {
+            if (i < levels.length) {
+                drawText(right3(i + 1), brightness.message, 3, 3 + i);
+                drawText(right3(stats.best[i]), brightness.message, 8, 3 + i);
+                draw_stars(stats.best[i], levels[i].grades, 13, 3 + i);
+            }
+            if (i + 14 < levels.length) {
+                drawText(right3(i + 15), brightness.message, 21, 3 + i);
+                drawText(right3(stats.best[i + 14]), brightness.message, 26, 3 + i);
+                draw_stars(stats.best[i + 14], levels[i + 14].grades, 31, 3 + i);
+            }
+            if (i + 28 < levels.length) {
+                drawText(right3(i + 29), brightness.message, 39, 3 + i);
+                drawText(right3(stats.best[i + 28]), brightness.message, 44, 3 + i);
+                draw_stars(stats.best[i + 28], levels[i + 28].grades, 49, 3 + i);
             }
         }
         return;
@@ -840,33 +1081,38 @@ function onUpdate()
 
     // Help
     drawBox(brightness.box, TUTORIAL_X, TUTORIAL_Y, TUTORIAL_WIDTH, TUTORIAL_HEIGHT);
-    drawText("Brave adventurer,", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 1)
-    drawText("collect all", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 2)
-    drawText("diamonds (" + glyph.treasure + ") and", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 3)
-    drawText("escape through the", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 4)
-    drawText("door. Monsters (" + glyph.monster + ")", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 5)
-    drawText("move 2 spaces each", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 6)
-    drawText("turn after you.", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 7)
-    drawText("They only come", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 8)
-    drawText("closer to you and", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 9)
-    drawText("prefer horizontal", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 10)
-    drawText("moves. Buttons (" + glyph.button + ")", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 11)
-    drawText("flip gates (═══).", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 12)
-    drawText("═", gatesOpen ? brightness.gateOpen : brightness.gateClosed, TUTORIAL_X + 14, TUTORIAL_Y + 12)
-    drawText("", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 14)
-    drawText("Arrow keys: Move", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 14)
+    drawText("Brave adventurer, ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 1)
+    drawText("grab all gems (?) ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 2)
+    drawText("and escape through", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 3)
+    drawText("the door. Monsters", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 4)
+    drawText("move up to 2 steps", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 5)
+    drawText("after your turn.  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 6)
+    drawText("They (?) only move", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 7)
+    drawText("closer to you and ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 8)
+    drawText("prefer horizontal ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 9)
+    drawText("moves. Moving on a", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 10)
+    drawText("button (?) toggles", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 11)
+    drawText("all gates (═══).  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 12)
+    drawText("                  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 13)
+    drawText("Arrow keys: Move  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 14)
     drawText("Space: Wait a turn", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 15)
-    drawText("R: Reset", moves.length > 0 ? brightness.message : brightness.inactiveMessage, TUTORIAL_X + 1, TUTORIAL_Y + 16)
-    drawText("U: Undo", moves.length > 0 ? brightness.message : brightness.inactiveMessage, TUTORIAL_X + 11, TUTORIAL_Y + 16)
-    drawText("P: Prev", stats.currentLevel > 0 ? brightness.message : brightness.inactiveMessage, TUTORIAL_X + 1, TUTORIAL_Y + 17)
-    drawText("N: Next", stats.currentLevel == stats.maxLevel ? brightness.inactiveMessage : brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 17)
-    drawText("X: Replay", stats.best[stats.currentLevel].length ? brightness.message : brightness.inactiveMessage, TUTORIAL_X + 1, TUTORIAL_Y + 18)
+    drawText("R: Reset", moves.length > 0 ? brightness.message : brightness.inactive, TUTORIAL_X + 1, TUTORIAL_Y + 16)
+    drawText("U: Undo", moves.length > 0 ? brightness.message : brightness.inactive, TUTORIAL_X + 11, TUTORIAL_Y + 16)
+    drawText("P: Prev", stats.currentLevel > 0 ? brightness.message : brightness.inactive, TUTORIAL_X + 1, TUTORIAL_Y + 17)
+    drawText("N: Next", stats.currentLevel == stats.maxLevel ? brightness.inactive : brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 17)
+    drawText("X: Replay", stats.best[stats.currentLevel].length ? brightness.message : brightness.inactive, TUTORIAL_X + 1, TUTORIAL_Y + 18)
     drawText("S: Stats", brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 18)
-    drawText(glyph.treasure, brightness.treasure, TUTORIAL_X + 11, TUTORIAL_Y + 3)
+
+    drawText(glyph.treasure, brightness.treasure, TUTORIAL_X + 16, TUTORIAL_Y + 2)
+    drawText(glyph.monster, brightness.monster, TUTORIAL_X + 7, TUTORIAL_Y + 7)
+    drawText(glyph.button, brightness.button, TUTORIAL_X + 9, TUTORIAL_Y + 11)
+    drawText("═", gatesOpen ? brightness.gateOpen : brightness.gateClosed, TUTORIAL_X + 13, TUTORIAL_Y + 12)
 
     // Level
     for (let y=0; y<level.height; ++y) {
-        drawText(level.data[y], brightness.level, level.x, level.y + y);
+        for (let x=0; x<level.width; ++x) {
+            drawText(level.data[y][x], level.data[y][x] == glyph.spot ? brightness.spot : brightness.level, level.x + x, level.y + y);
+        }
     }
 
     // Undos
@@ -1084,10 +1330,15 @@ function onInput(key)
     }
     if (key == 120 || key == 88) { // X
         if (stats.best[stats.currentLevel].length) {
-            loadLevel();
-            replay = stats.best[stats.currentLevel];
-            replayDelay = REPLAY_START_DELAY;
-            return;
+            if (replay.length > 0) {
+                replay = "";
+                return;
+            } else {
+                loadLevel();
+                replay = stats.best[stats.currentLevel];
+                replayDelay = REPLAY_START_DELAY;
+                return;
+            }
         }
     }
     if (key == 117 || key == 85) { // U
@@ -1163,10 +1414,16 @@ function onPlayerMove(direction) {
             messages = ["    You escaped     ", " with the treasure! "];
             if (stats.currentLevel == stats.maxLevel) stats.maxLevel += 1;
             save();
+            ext_level_solved(stats.currentLevel, moves);
         } else {
             gameOver = true;
             messages = [" You did not collect ", "  all the treasure!  "];
         }
+    }
+
+    if (moves.length >= 1000) {
+        gameOver = true;
+        messages = [" You died of exhaustion... "];
     }
 }
 
@@ -1221,13 +1478,29 @@ function right3(number) {
 }
 
 function grade(moves, grades) {
-    if (moves.length == 0 || moves.length > 999) return "-";
-    if (grades.length >= 4 && moves.length > grades[3]) return "F";
-    if (grades.length >= 3 && moves.length > grades[2]) return "D";
-    if (grades.length >= 2 && moves.length > grades[1]) return "C";
-    if (grades.length >= 1 && moves.length > grades[0]) return "B";
-    if (grades.length >= 1 && moves.length < grades[0]) return "S";
-    return "A";
+    if (moves.length == 0 || moves.length > 999) return "";
+    if (grades.length >= 4 && moves.length > grades[3]) return "D";
+    if (grades.length >= 3 && moves.length > grades[2]) return "C";
+    if (grades.length >= 2 && moves.length > grades[1]) return "B";
+    if (grades.length >= 1 && moves.length > grades[0]) return "A";
+    if (grades.length >= 1 && moves.length < grades[0]) return "Y";
+    return "S";
+}
+
+function draw_stars(moves, grades, x, y) {
+    if (moves.length == 0 || moves.length > 999 || (grades.length >= 3 && moves.length > grades[2])) {
+        drawText(glyph.blank + glyph.blank + glyph.blank, brightness.inactive, x, y);
+    } else if (grades.length >= 2 && moves.length > grades[1]) {
+        drawText(glyph.star, brightness.star, x, y);
+        drawText(glyph.blank + glyph.blank, brightness.inactive, x + 1, y);
+    } else if (grades.length >= 1 && moves.length > grades[0]) {
+        drawText(glyph.star + glyph.star, brightness.star, x, y);
+        drawText(glyph.blank, brightness.inactive, x + 2, y);
+    } else if (grades.length >= 1 && moves.length == grades[0]) {
+        drawText(glyph.star + glyph.star + glyph.star, brightness.star, x, y);
+    } else {
+        drawText("???", brightness.star, x, y);
+    }
 }
 
 function create_animation(keys, x, y) {
@@ -1289,3 +1562,4 @@ function num_to_crypt(number, length) {
     return output;
 }
 
+function ext_level_solved(index, moves) {}
