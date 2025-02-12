@@ -7,7 +7,7 @@ TUTORIAL_Y = 0;
 TUTORIAL_WIDTH = 20;
 TUTORIAL_HEIGHT = 20;
 
-SAVEGAME_VERSION = 9;
+SAVEGAME_VERSION = 10;
 
 SCREEN_GAME = 1;
 SCREEN_STATS = 2;
@@ -30,6 +30,8 @@ let moveDelay;
 let lastMove;
 let undoCounter;
 let undoSteps;
+let undoUsed = 0;
+let resetUsed = 0;
 let replay;
 let replayDelay;
 let replayBlink = true;
@@ -47,6 +49,7 @@ let cheatBuffer = "";
 
 const levels = [
 {
+    id: "tutorial",
     template: [
         "  you       a monster",
         "   v             v   ",
@@ -68,6 +71,7 @@ const levels = [
     solution: "tvs10pigtoei"
 },
 {
+    id: "lonely",
     template: [
         "    ###########    ",
         "    #. . . . .#    ",
@@ -87,6 +91,7 @@ const levels = [
     solution: "un2zm0rsa"
 },
 {
+    id: "windmill",
     template: [
         "  #############  ",
         "  #. . . . . .#  ",
@@ -104,6 +109,7 @@ const levels = [
     solution: "jhieriwneoyabqo"
 },
 {
+    id: "trap",
     template: [
         "#########-###",
         "#M . . . . .#",
@@ -119,6 +125,7 @@ const levels = [
     solution: "txwhshlz2nsgm"
 },
 {
+    id: "guardian",
     template: [
         "  ###########",
         "  #.#. . . P#",
@@ -138,6 +145,7 @@ const levels = [
     solution: "iicpgvdzbp0tluxmq5s"
 },
 {
+    id: "cramped",
     template: [
         "###-#########",
         "#. .#. . P T#",
@@ -155,27 +163,23 @@ const levels = [
     solution: "ylimpfoohozbiooii45kcmo"
 },
 {
+    id: "swing",
     template: [
-        "  ###################  ",
-        "  #. . . . . . . . .#  ",
-        "### #####       ### ###",
-        "#. . T .#. . T .#. . .#",
-        "# ###   #       #   # #",
-        "#. . . . . . . . . .#.#",
-        "###   ###########   # #",
-        "  #. .#         #. . .#",
-        "  ### #   #######   ###",
-        "  #. .#   #.#. . . .#  ",
-        "  ### ##### #   ### #  ",
-        "    #. . T . . . . T#  ",
-        "    ###           # #  ",
-        "      #. . . . P .#M#  ",
-        "      #########-#####  ",
+        "#####-#######",
+        "#T . . . . .#",
+        "### ### # ###",
+        "#. .#. .#. M#",
+        "# # # # ### #",
+        "#.#.#.#. . T#",
+        "# ### ##### #",
+        "#. . P . . .#",
+        "#############",
     ],
-    grades: [44, 46, 50],
-    solution: "eboebfwj3w0q0gcpilwzcvkaizd"
+    grades: [37, 39, 45],
+    solution: "enhpfvwif1ayfbieawy0f5bv"
 },
 {
+    id: "button",
     template: [
         "#-#   #######                      ",
         "#P#   #. . .#                      ",
@@ -191,6 +195,7 @@ const levels = [
     solution: "o5hllxvdfse5inbjbf"
 },
 {
+    id: "backdoor",
     template: [
         "###########",
         "#. . . . P#",
@@ -210,6 +215,29 @@ const levels = [
     solution: "ebucfvilp204zfdwgnoh5ysgnbxe"
 },
 {
+    id: "meadow",
+    template: [
+        "#################  ",
+        "#. . . . . . . .#  ",
+        "# # ###     #   ###",
+        "#.#. T#. . .#. . T#",
+        "# ### #     ###   #",
+        "#. . . . . . . . .#",
+        "# #   ######### # #",
+        "#.#. .#. . . .#.#.#",
+        "# ### ##### ### # #",
+        "#.#. . .#. .#. . .#",
+        "# #     # ### ### #",
+        "#. . . . T . . . T#",
+        "### ###         # #",
+        "  #. . . . . P .#M#",
+        "  ###########-#####",
+    ],
+    grades: [40, 44, 54],
+    solution: "epoojhmgam0dflppsvjam0ugq"
+},
+{
+    id: "wait",
     template: [
         "#####-#######",
         "#.#. . . P T#",
@@ -229,6 +257,7 @@ const levels = [
     solution: "1bpifxuo33cwagkijhle42tsy"
 },
 {
+    id: "emptiness",
     template: [
         "#############",
         "#. . . . . .#",
@@ -248,6 +277,7 @@ const levels = [
     solution: "ymgejlsz3wovepdgdc44dx"
 },
 {
+    id: "twins",
     template: [
         "#######-###",
         "#. . M . .#",
@@ -267,6 +297,43 @@ const levels = [
     solution: "55kgdhwh4mysokmiskglpm0vd3v"
 },
 {
+    id: "stonewall",
+    template: [
+        "###########",
+        "#M . T . .#",
+        "# ##### # #",
+        "#.#. . .#T#",
+        "# # # ### #",
+        "#.#.#.#. .I",
+        "# # # #   #",
+        "#.#.#. . P#",
+        "# # ##### #",
+        "#. T . . .#",
+        "###########",
+    ],
+    grades: [39, 42, 49],
+    solution: "endcshlnm3osenhvibhxaa122"
+},
+{
+    id: "bait",
+    template: [
+        "#########    ",
+        "#. . . .#    ",
+        "# ### # ###  ",
+        "#. T#.#. .#  ",
+        "# ### # # ###",
+        "#. . .#P#M#MI",
+        "# ### # # # #",
+        "#.#. . .#.#.#",
+        "# ###   ### #",
+        "#. . . . . .#",
+        "#############",
+    ],
+    grades: [36, 40, 46],
+    solution: "dhdfmkgnpth4zfcurhxxpbz"
+},
+{
+    id: "locksmith",
     template: [
         "  ###########  ",
         "  #. PG. . .#  ",
@@ -284,6 +351,27 @@ const levels = [
     solution: "p3bgmvjhionrn3bblepbazetgyg5"
 },
 {
+    id: "distraction",
+    template: [
+        "#############",
+        "#. . .#. . .#",
+        "###   # ### #",
+        "I.#. . .#. .#",
+        "# # ### # ###",
+        "#. . . . . P#",
+        "### #####   #",
+        "#. . . M#. .#",
+        "# ### # # # #",
+        "#T T#.#.#.#.#",
+        "#   ### # ###",
+        "#T T . . . .#",
+        "#############",
+    ],
+    grades: [48, 52, 62],
+    solution: "ehovtewao3eyp3muolgjj4lr1unqm"
+},
+{
+    id: "stuck",
     template: [
         "###########-#######",
         "#. . . . . . . . .#",
@@ -303,27 +391,27 @@ const levels = [
     solution: "ipectbsz3m0zkkeexj1hl"
 },
 {
+    id: "sesame",
     template: [
-        "###############",
-        "#. . . . . . T#",
-        "#   ### # #####",
-        "#. .#. .#. . .#",
-        "# ###   #     #",
-        "#. . . .#. . .#",
-        "# ###   # ### #",
-        "#. .#. .#. M#.#",
-        "### # # ##### #",
-        "#. . .#. . .#.#",
-        "#   ###     # #",
-        "#. .#.#. . .#.#",
-        "# ### # ### # #",
-        "#. . . . P . .#",
-        "#########-#####",
+        "#############",
+        "IM .gB T . P#",
+        "#   ###   ###",
+        "#. .#.#. . .#",
+        "# ### #   # #",
+        "#. . . . .#.#",
+        "#   #   ### #",
+        "#. .#. .#.#.#",
+        "# # #   # # #",
+        "#.#. . . .#.#",
+        "#####     # #",
+        "#. . . . . .#",
+        "#############",
     ],
-    grades: [78, 82, 90],
-    solution: "knoidbw1jo0tihgutbch32crpkdeafez3meuolutzg2a"
+    grades: [48, 51, 58],
+    solution: "pfcponibp1yvabxwrhflnsf5pes3m"
 },
 {
+    id: "insight",
     template: [
         "#############-#",
         "#M . . . . .#.#",
@@ -345,25 +433,7 @@ const levels = [
     solution: "idggmkdnd1au05wed4kuc5j"
 },
 {
-    template: [
-        "#############",
-        "IM .gB T . P#",
-        "#   ###   ###",
-        "#. .#.#. . .#",
-        "# ### #   # #",
-        "#. . . . .#.#",
-        "#   #   ### #",
-        "#. .#. .#.#.#",
-        "# # #   # # #",
-        "#.#. . . .#.#",
-        "#####     # #",
-        "#. . . . . .#",
-        "#############",
-    ],
-    grades: [48, 51, 58],
-    solution: "pfcponibp1yvabxwrhflnsf5pes3m"
-},
-{
+    id: "triplets",
     template: [
         "    ###########  ",
         "    #. . . . .#  ",
@@ -383,25 +453,7 @@ const levels = [
     solution: "ibdpaijme1oscchloapn5mlwddiemhwhjzobf2wld111ejx"
 },
 {
-    template: [
-        "#############",
-        "I. . . . .#.#",
-        "# ### ### # #",
-        "#P .#. .#. .#",
-        "# ##### ### #",
-        "#. . . . . .#",
-        "# ### ### # #",
-        "#.#. . . .#.#",
-        "### # ### # #",
-        "#T#.#.#. .#.#",
-        "# ### # ### #",
-        "#. M . . . .#",
-        "#############",
-    ],
-    grades: [51, 55, 59],
-    solution: "yfwpceogfuz1akcirlbzm3czcwsl4za"
-},
-{
+    id: "vast",
     template: [
         "#####################",
         "#. T . . . . . . . .#",
@@ -427,6 +479,7 @@ const levels = [
     solution: "ebxwreen3yy3ebogbnel3j0bonwcimun5qe5cpicr513km"
 },
 {
+    id: "lure",
     template: [
         "#######-#####",
         "#M . .#. . M#",
@@ -448,23 +501,49 @@ const levels = [
     solution: "d3wmfqgldz0vibbdlvi0frc2hfhhpncg3n"
 },
 {
+    id: "toggle",
     template: [
-        "  #######################  ",
-        "  I. . . . . . . . . . .#  ",
-        "### # # ### ##### ### # ###",
-        "#. .#.#. .#T T T . . .#. .#",
-        "# # ### # # # ### # ### # #",
-        "#P#.#. .#. T#T T .#. .#.#M#",
-        "# # # ### # # # ### # # # #",
-        "#. .#.#. .#T T#T . .#.#. .#",
-        "### # # ### ### ##### # ###",
-        "  #. . . . . . . . . . .#  ",
-        "  #######################  ",
+        "###############  ",
+        "#. T T#T T . M#  ",
+        "# #   # # ### #  ",
+        "#.#. . .#. . .#  ",
+        "# # ##### #G#####",
+        "#.#.#. .#.#. . .#",
+        "# ##### ### ### #",
+        "#. .g. B . .#. .#",
+        "### #     # ### #",
+        "#. .#. . .#.#. .#",
+        "# ### # ##### # #",
+        "#P#. .#. . . .#.I",
+        "#################",
     ],
-    grades: [44, 48, 58],
-    solution: "hicrail15ryqa3eeelijdsta3jv"
+    grades: [67, 73, 95],
+    solution: "hcwhmcdzjzec0cbdpfgmircth3jbapmzjeu5mwe"
 },
 {
+    id: "hadrian",
+    template: [
+        "###############",
+        "#. . . . . . T#",
+        "#   ### # #####",
+        "#. .#. .#. . .#",
+        "# ###   #     #",
+        "#. . . .#. . .#",
+        "# ###   # ### #",
+        "#. .#. .#. M#.#",
+        "### # # ##### #",
+        "#. . .#. . .#.#",
+        "#   ###     # #",
+        "#. .#.#. . .#.#",
+        "# ### # ### # #",
+        "#. . . . P . .#",
+        "#########-#####",
+    ],
+    grades: [78, 82, 90],
+    solution: "knoidbw1jo0tihgutbch32crpkdeafez3meuolutzg2a"
+},
+{
+    id: "caves",
     template: [
         "##### ###############",
         "IM .# #T . . . . . T#",
@@ -488,27 +567,47 @@ const levels = [
     solution: "0oelplwz3spdfkcwgapifuevf5jijalia4fye3gey2hlfo"
 },
 {
+    id: "mole",
     template: [
-        "### ### ### ### ### ###",
-        "#T# #M# #T# #T# #M# #T#",
-        "# ### ### # # ### ### #",
-        "#. . . . .# #. . . . .#",
-        "### ### ### ### #G# ###",
-        "  #.#.G.#     #.#.#.#  ",
-        "  # # # ####### # # #  ",
-        "  #.#.#. . . . .#.#.#  ",
-        "  # ### ####### #G# #  ",
-        "  #.#.G.#. . .#.#.#.#  ",
-        "  # # # # #G# # # # #  ",
-        "  #.G.#.#.#B#.#.#.G.#  ",
-        "  # ### # # # # ### #  ",
-        "  #. . .G.#P#.G. . .#  ",
-        "  #########-#########  ",
+        "#############",
+        "I. . . . .#.#",
+        "# ### ### # #",
+        "#P .#. .#. .#",
+        "# ##### ### #",
+        "#. . . . . .#",
+        "# ### ### # #",
+        "#.#. . . .#.#",
+        "### # ### # #",
+        "#T#.#.#. .#.#",
+        "# ### # ### #",
+        "#. M . . . .#",
+        "#############",
     ],
-    grades: [134, 144, 158],
-    solution: "ifugjap0mrad0necfnelczd5khibrvbmjyl2a3goemviawytihbwrcdnjuitfkccbncli250"
+    grades: [51, 55, 59],
+    solution: "yfwpceogfuz1akcirlbzm3czcwsl4za"
 },
 {
+    id: "reunion",
+    template: [
+        "#############    ",
+        "I. . . . . .#    ",
+        "# ##### ### ###  ",
+        "#. . .#. .#M .#  ",
+        "##### ### ### #  ",
+        "  #. . . P   .#  ",
+        "  # ###   ### #  ",
+        "  #.#. . . . .#  ",
+        "  # ### ### #####",
+        "  #. . .#. .#M .#",
+        "  ### ##### #   #",
+        "    #. . . . . T#",
+        "    #############",
+    ],
+    grades: [76, 84, 100],
+    solution: "dgfhmkibnoauy3jgbioj3t04e5mmibwhd2k2cp1onk1"
+},
+{
+    id: "escape",
     template: [
         "#########-###############",
         "#. . . . . . . . . . .GM#",
@@ -530,6 +629,7 @@ const levels = [
     solution: "zbqsu2bca"
 },
 {
+    id: "bouncer",
     template: [
         "  #############  ",
         "  #M .#. . . M#  ",
@@ -549,6 +649,47 @@ const levels = [
     solution: "kldwakpharhrz3bwcfo0hwdvlr3gjkh"
 },
 {
+    id: "distance",
+    template: [
+        "  #######################  ",
+        "  I. . . . . . . . . . .#  ",
+        "### # # ### ##### ### # ###",
+        "#. .#.#. .#T T T . . .#. .#",
+        "# # ### # # # ### # ### # #",
+        "#P#.#. .#. T#T T .#. .#.#M#",
+        "# # # ### # # # ### # # # #",
+        "#. .#.#. .#T T#T . .#.#. .#",
+        "### # # ### ### ##### # ###",
+        "  #. . . . . . . . . . .#  ",
+        "  #######################  ",
+    ],
+    grades: [44, 48, 58],
+    solution: "hicrail15ryqa3eeelijdsta3jv"
+},
+{
+    id: "castle",
+    template: [
+        "### ### ### ### ### ###",
+        "#T# #M# #T# #T# #M# #T#",
+        "# ### ### # # ### ### #",
+        "#. . . . .# #. . . . .#",
+        "### ### ### ### #G# ###",
+        "  #.#.G.#     #.#.#.#  ",
+        "  # # # ####### # # #  ",
+        "  #.#.#. . . . .#.#.#  ",
+        "  # ### ####### #G# #  ",
+        "  #.#.G.#. . .#.#.#.#  ",
+        "  # # # # #G# # # # #  ",
+        "  #.G.#.#.#B#.#.#.G.#  ",
+        "  # ### # # # # ### #  ",
+        "  #. . .G.#P#.G. . .#  ",
+        "  #########-#########  ",
+    ],
+    grades: [134, 144, 158],
+    solution: "ifugjap0mrad0necfnelczd5khibrvbmjyl2a3goemviawytihbwrcdnjuitfkccbncli250"
+},
+{
+    id: "altar",
     template: [
         "  #############",
         "  #. . . . . .#",
@@ -570,6 +711,7 @@ const levels = [
     solution: "dplebvuda445elbmixhzo3dddpigceoeh3h1dmhoplcn530qcowvd"
 },
 {
+    id: "friends",
     template: [
         "#############",
         "#. . . . . .#",
@@ -589,6 +731,7 @@ const levels = [
     solution: "ibiervkhi5hb0gcierhz5wcthhkieglz3vo5pkllrhhhdzox5t1c"
 },
 {
+    id: "jigsaw",
     template: [
         "  ###############  ",
         "  #. . . . . . .#  ",
@@ -608,6 +751,7 @@ const levels = [
     solution: "obwegbwgd4i505jwtbchcmitkbiwovunjsfbingipbi0340403cuf5ci"
 },
 {
+    id: "pathfinder",
     template: [
         "#################################",
         "#. . T#. T#. .#T#.G.g.G.g.G.g.GM#",
@@ -629,6 +773,7 @@ const levels = [
     solution: "hkwesvmd4mcqecbgeaoeishu0fpmepih3mlbp5ww51hcil"
 },
 {
+    id: "precision",
     template: [
         "###############",
         "#. .#. . M#. T#",
@@ -652,6 +797,7 @@ const levels = [
     solution: "0lcpokiimw01cplojtgz5rp1jhgitbc1cmrjou1g"
 },
 {
+    id: "cross",
     template: [
         "#################",
         "#. . .#.#. . . .#",
@@ -675,6 +821,7 @@ const levels = [
     solution: "i5egjkm1m1ouaohgdvj025euofdgbhca3oo4eavwmphaf2krcnvtpbc1jpiutxisz"
 },
 {
+    id: "circle",
     template: [
         "        #############-#        ",
         "        #. . . . . .#.#        ",
@@ -700,6 +847,7 @@ const levels = [
     solution: "ehiuifibd2hrhowlrqvd3w0yp3lcpmghiwezkbeemewhezevflwurpwbaw020ndgmeibdueuekicogjl3rlbalmmbneeh3zmwm1"
 },
 {
+    id: "confusion",
     template: [
         "#####-###########",
         "#. . . . M .#T#M#",
@@ -723,6 +871,7 @@ const levels = [
     solution: "hbceavmip1pv0lvhbaibp5lte2wwtcghu3voqe"
 },
 {
+    id: "deception",
     template: [
         "  #######-#############",
         "  #. . . P . . . . . .#",
@@ -744,6 +893,7 @@ const levels = [
     solution: "oficdvl15oitc2iiemdlkol2ofiirvlemvove2wuofianzet03ewjhosxsl"
 },
 {
+    id: "chambers",
     template: [
         "#############                ",
         "I. . . .#. .#                ",
@@ -769,6 +919,7 @@ const levels = [
     solution: "ckellbwiam0ve3gwlaleczpvicljeachd2eve1wwavwip3k0ilmdpvlbpserpgpej2twiof"
 },
 {
+    id: "atlantis",
     template: [
         "    ###################    ",
         "    #. . . . M . . . .#    ",
@@ -794,6 +945,7 @@ const levels = [
     solution: "homjfmikn4zvynlhiac13o55cbigdhez3m0dfpiiplcnjo0b0biibhel3m0bokgdpxd1cp0thcljeacndse5twdwk5"
 },
 {
+    id: "mansion",
     template: [
         "###########-#########",
         "#. . . . . . M#T .#B#",
@@ -815,6 +967,7 @@ const levels = [
     solution: "pgdwtemimrltogiipihbdp0bamodpbwz33ivobppjmvih3l2lnpglecndwa5cgopbavbpti205sxczi"
 },
 {
+    id: "doubleclick",
     template: [
         "###################            ",
         "#. . . . .#. . . .#            ",
@@ -838,6 +991,7 @@ const levels = [
     solution: "y5fidnx13wizplmcoqiklserjhllmxuzh4cuoftgplgjkzyblchcebu13mi2lcodbkmjlo"
 },
 {
+    id: "chase",
     template: [
         "#####################",
         "#. . . . . . . . M .#",
@@ -861,6 +1015,7 @@ const levels = [
     solution: "a3mcewwhd4lqi5mmrbd1b2nukneeimugmmibyl3knkl"
 },
 {
+    id: "palace",
     template: [
         "  #################          ",
         "  #. .G. . .G. . .#          ",
@@ -884,6 +1039,7 @@ const levels = [
     solution: "0lchacenevkrcnwlnmd1jscd0fhemvedispsibicbawlau0bafooslihe30b0fmdemm1a4ysynlpfngojppb0cdibaiqwrq2i"
 },
 {
+    id: "sixtysix",
     template: [
         "#########   #########   #########",
         "#M . . .#   #. . . .#   #. T . M#",
@@ -944,6 +1100,43 @@ const explosion = [
     { duration: 2, symbol: '%', brightness: 14 },
 ]
 
+const ADJECTIVES = [
+    "Academic","Admired","Adorable","Aggressive","Amazing","Amiable","Amused","Anonymous","Anxious","Athletic",
+    "Awesome","Awkward","Basic","Beautiful","Bold","Brilliant","Busy","Calm","Careful","Casual","Cautious",
+    "Charming","Cheerful","Clever","Clumsy","Colorful","Competitive","Concerned","Confident","Confused",
+    "Content","Cool","Courageous","Crazy","Creative","Criminal","Cuddly","Curious","Dangerous","Deaf",
+    "Defensive","Delicate","Desperate","Determined","Diplomatic","Dramatic","Drunk","Eager","Efficient",
+    "Elderly","Electronic","Energetic","Enormous","Ethical","Evil","Excellent","Excited","Faithful","Familiar",
+    "Famous","Fancy","Fantastic","Fashionable","Fast","Fierce","Fluffy","Foolish","Formidable","Friendly",
+    "Funny","Generous","Gentle","Giant","Glamorous","Glorious","Graceful","Grim","Handsome","Happy","Healthy",
+    "Heavy","Helpful","Hilarious","Honest","Hungry","Important","Impressive","Independent","Injured","Innocent",
+    "Intelligent","Invisible","Jolly","Just","Keen","Kind","Large","Lazy","Little","Lonely","Loud","Lovely",
+    "Loyal","Lucky","Magic","Married","Marvellous","Massive","Melodic","Mighty","Mobile","Modern","Mysterious",
+    "Natural","Nervous","Nice","Noble","Noisy","Odd","Old","Ordinary","Pale","Passive","Patient","Peaceful",
+    "Peculiar","Pleasant","Popular","Powerful","Productive","Proud","Puzzled","Quiet","Rapid","Rare","Reasonable",
+    "Relaxed","Reliable","Remarkable","Respectable","Responsible","Rich","Ridiculous","Robust","Romantic","Royal",
+    "Sad","Satisfied","Scared","Scary","Secret","Sensible","Serious","Shiny","Shy","Silent","Silly","Skilled",
+    "Sleepy","Slim","Slow","Small","Strange","Strategic","Striped","Strong","Subtle","Successful","Superb",
+    "Supreme","Surprised","Suspicious","Sweet","Swift","Tame","Tiny","Tough","Tragic","Tricky","Ultimate",
+    "Uncertain","Unemployed","Unique","Valuable","Vulnerable","Weird","Wild","Worried","Young","Zany"
+]
+const ANIMALS = [
+    "Aardvark","Albatross","Alligator","Alpaca","Ant","Anteater","Antelope","Ape","Armadillo","Baboon","Badger",
+    "Barracuda","Bat","Bear","Beaver","Bee","Bison","Boar","Buffalo","Butterfly","Camel","Capybara","Caribou",
+    "Cassowary","Cat","Caterpillar","Cheetah","Chicken","Chimpanzee","Chinchilla","Cobra","Cormorant","Coyote",
+    "Crab","Crane","Crocodile","Crow","Deer","Dinosaur","Dog","Donkey","Dolphin","Dove","Dragonfly","Duck",
+    "Dugong","Eagle","Eel","Elephant","Elk","Emu","Falcon","Ferret","Fish","Flamingo","Fly","Fox","Frog",
+    "Gazelle","Giraffe","Gnu","Goat","Goldfish","Goose","Gorilla","Grasshopper","Hamster","Hare","Hawk",
+    "Hedgehog","Heron","Herring","Hippopotamus","Hornet","Horse","Hummingbird","Hyena","Jackal","Jaguar",
+    "Jellyfish","Kangaroo","Koala","Kookabura","Lemur","Leopard","Lion","Llama","Lobster","Locust","Magpie",
+    "Manatee","Mandrill","Mantis","Meerkat","Mole","Mongoose","Monkey","Moose","Mosquito","Mouse","Mule",
+    "Narwhal","Newt","Octopus","Opossum","Ostrich","Otter","Owl","Panther","Parrot","Pelican","Penguin","Pig",
+    "Pony","Porcupine","Rabbit","Raccoon","Ram","Rat","Raven","Rhinoceros","Salamander","Salmon","Scorpion",
+    "Seal","Shark","Sheep","Snail","Snake","Sparrow","Spider","Squid","Squirrel","Stingray","Stork","Swallow",
+    "Swan","Tapir","Tiger","Toad","Turkey","Turtle","Viper","Vulture","Walrus","Wasp","Weasel","Whale","Wolf",
+    "Wolverine","Wombat","Yak","Zebra"
+]
+
 function getName()
 {
     return "Monster Maze";
@@ -954,7 +1147,22 @@ function onConnect()
     savegame = loadData();
     if (savegame) {
         stats = JSON.parse(savegame);
-        if (!stats.version || stats.version != SAVEGAME_VERSION) {
+        if (!stats.version) {
+            resetSavegame();
+        }
+        if (!stats.player) {
+            stats.player = generatePlayerName();
+        }
+        if (stats.version == 9) {
+            migrateSavegame(10, [
+                0, 1, 2, 3, 4, 5, -1, 7, 8, 10,
+                11, 12, 15, 17, 24, 19, 18, 20, 26, 21,
+                22, 30, 25, 31, 28, 29, 32, 33, 34, 35,
+                36, 37, 38, 39, 40, 41, 42, 43, 44, 45,
+                46, 47
+            ])
+        }
+        if (stats.version != SAVEGAME_VERSION) {
             resetSavegame();
         }
     } else {
@@ -963,10 +1171,43 @@ function onConnect()
     loadLevel();
 }
 
+function generatePlayerName() {
+    const a = Math.floor(Math.random() * ADJECTIVES.length);
+    const b = Math.floor(Math.random() * (ADJECTIVES.length - 1));
+    if (a == b) b = ADJECTIVES.length - 1;
+    const c = Math.floor(Math.random() * ANIMALS.length);
+    return ADJECTIVES[a] + ADJECTIVES[b] + ANIMALS[c];
+}
+
 function resetSavegame()
 {
-    stats = { version: SAVEGAME_VERSION, currentLevel: 0, maxLevel: 0, best: [] }
-    for (let i=0; i<levels.length; ++i) stats.best.push("");
+    player_name = stats && stats.player || generatePlayerName();
+    stats = { player: player_name, version: SAVEGAME_VERSION, currentLevel: 0, maxLevel: 0, best: [] }
+    while (stats.best.length < levels.length) stats.best.push("");
+    save();
+}
+
+function migrateSavegame(toVersion, migrationMap) {
+    let newBest = [];
+    while (newBest.length < levels.length) newBest.push("");
+    for (let i=0; i<stats.best.length; ++i) {
+        newPos = migrationMap[i];
+        if (newPos >= 0) {
+            newBest[newPos] = stats.best[i];
+        }
+    }
+
+    let firstUnsolvedLevel = levels.length - 1;
+    let lastSolvedLevel = 0;
+    for (let i=0; i<newBest.length; ++i) {
+        if (newBest[i].length > 0) {
+            lastSolvedLevel = i;
+        } else if (i < firstUnsolvedLevel) {
+            firstUnsolvedLevel = i;
+        }
+    }
+
+    stats = { player: stats.player, version: toVersion, currentLevel: firstUnsolvedLevel, maxLevel: lastSolvedLevel + 1, best: newBest }
     save();
 }
 
@@ -1057,23 +1298,23 @@ function onUpdate()
     clearScreen();
 
     if (screen == SCREEN_STATS) {
-        drawBox(brightness.box, 1, 0, 54, 19);
+        drawBox(brightness.box, 1, 0, 54, 20);
         drawText("Lvl Mov Rank      Lvl Mov Rank      Lvl Mov Rank", brightness.message, 4, 1);
-        for (let i=0; i<14; ++i) {
+        for (let i=0; i<16; ++i) {
             if (i < levels.length) {
                 drawText(right3(i + 1), brightness.message, 3, 3 + i);
                 drawText(right3(stats.best[i]), brightness.message, 8, 3 + i);
                 draw_stars(stats.best[i], levels[i].grades, 13, 3 + i);
             }
-            if (i + 14 < levels.length) {
-                drawText(right3(i + 15), brightness.message, 21, 3 + i);
-                drawText(right3(stats.best[i + 14]), brightness.message, 26, 3 + i);
-                draw_stars(stats.best[i + 14], levels[i + 14].grades, 31, 3 + i);
+            if (i + 16 < levels.length) {
+                drawText(right3(i + 17), brightness.message, 21, 3 + i);
+                drawText(right3(stats.best[i + 16]), brightness.message, 26, 3 + i);
+                draw_stars(stats.best[i + 16], levels[i + 16].grades, 31, 3 + i);
             }
-            if (i + 28 < levels.length) {
-                drawText(right3(i + 29), brightness.message, 39, 3 + i);
-                drawText(right3(stats.best[i + 28]), brightness.message, 44, 3 + i);
-                draw_stars(stats.best[i + 28], levels[i + 28].grades, 49, 3 + i);
+            if (i + 32 < levels.length) {
+                drawText(right3(i + 33), brightness.message, 39, 3 + i);
+                drawText(right3(stats.best[i + 32]), brightness.message, 44, 3 + i);
+                draw_stars(stats.best[i + 32], levels[i + 32].grades, 49, 3 + i);
             }
         }
         return;
@@ -1313,6 +1554,8 @@ function onInput(key)
     if (key == 110 || key == 78) { // N
         if (stats.currentLevel < stats.maxLevel) {
             stats.currentLevel += 1;
+            resetUsed = 0;
+            undoUsed = 0;
             loadLevel();
         }
         return;
@@ -1320,11 +1563,14 @@ function onInput(key)
     if (key == 112 || key == 80) { // P
         if (stats.currentLevel > 0) {
             stats.currentLevel -= 1;
+            resetUsed = 0;
+            undoUsed = 0;
             loadLevel();
         }
         return;
     }
     if (key == 114 || key == 82) { // R
+        resetUsed += 1;
         loadLevel();
         return;
     }
@@ -1344,6 +1590,7 @@ function onInput(key)
     if (key == 117 || key == 85) { // U
         if (!gameWon && undoCounter <= 0 && moveDelay <= 0 && moves.length > 0) {
             undoCounter = 1;
+            undoUsed += 1;
             gameOver = false;
             return;
         }
@@ -1351,7 +1598,11 @@ function onInput(key)
 
     if (gameWon || gameOver) {
         if (is_continue(key)) {
-            if (gameWon) stats.currentLevel += 1;
+            if (gameWon) {
+                stats.currentLevel += 1;
+                resetUsed = 0;
+                undoUsed = 0;
+            }
             loadLevel();
         }
         return;
@@ -1414,7 +1665,9 @@ function onPlayerMove(direction) {
             messages = ["    You escaped     ", " with the treasure! "];
             if (stats.currentLevel == stats.maxLevel) stats.maxLevel += 1;
             save();
-            ext_level_solved(stats.currentLevel, moves);
+            ext_level_solved(stats.player, stats.currentLevel, levels[stats.currentLevel].id, moves, resetUsed, undoUsed, SAVEGAME_VERSION);
+            resetUsed = 0;
+            undoUsed = 0;
         } else {
             gameOver = true;
             messages = [" You did not collect ", "  all the treasure!  "];
@@ -1562,4 +1815,4 @@ function num_to_crypt(number, length) {
     return output;
 }
 
-function ext_level_solved(index, moves) {}
+function ext_level_solved(player, index, level_id, moves, resets, undos, version) {}

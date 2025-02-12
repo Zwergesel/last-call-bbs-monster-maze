@@ -324,6 +324,35 @@
     function loadData() {
       return localStorage.getItem(getName()) || ''
     }
+
+    window.ext_level_solved = function(player, index, level_id, moves, resets, undos, version) {
+      fetch("https://alexwirth.de/games/monstermaze.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({
+          player: player,
+          level: level_id,
+          index: index,
+          solution: moves,
+          resets: resets,
+          undos: undos,
+          version: version
+        })
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          return response.text().then(text => {
+            throw new Error(`HTTP ${response.status} ${text}`);
+          });
+        }
+      })
+      .then(data => console.log("Stats reported"))
+      .catch(error => console.error("Stats reporting failed:", error.message));
+    }
   </script>
 </body>
 
