@@ -23,6 +23,7 @@ SIMULATE_AT = [11, 6];
 MOVE_SYMBOLS = "^v<>x";
 CRYPT_SYMBOLS = "abcdefghijklmnopqrstuvwxyz012345";
 
+let mobileUiState = "disabled"; // disabled, help, controls
 let screen;
 let stats;
 let moves;
@@ -1066,6 +1067,30 @@ const levels = [
 },
 ];
 
+function createArea(x, y, width, height, text, key=null) {
+    return { x: x, y: y, width: width, height: height, text: text, key: key };
+}
+
+function inArea(area, x, y) {
+    return x >= area.x && x < area.x + area.width && y >= area.y && y < area.y + area.height;
+}
+
+const tapAreas = {
+    maze: createArea(1, 1, TUTORIAL_X - 2, 18, "", 10),
+    replay: createArea(TUTORIAL_X + 1, TUTORIAL_Y, 9, 3, "My Best", 120),
+    stats: createArea(TUTORIAL_X + 10, TUTORIAL_Y, 9, 3, " Stats ", 115),
+    prev: createArea(TUTORIAL_X + 1, TUTORIAL_Y + 3, 6, 3, "Prev", 112),
+    reset: createArea(TUTORIAL_X + 7, TUTORIAL_Y + 3, 6, 3, "Redo", 114),
+    next: createArea(TUTORIAL_X + 13, TUTORIAL_Y + 3, 6, 3, "Next", 110),
+    up: createArea(TUTORIAL_X + 7, TUTORIAL_Y + 8, 6, 4, " Up ", 17),
+    left: createArea(TUTORIAL_X, TUTORIAL_Y + 12, 7, 4, "Left", 19),
+    wait: createArea(TUTORIAL_X + 7, TUTORIAL_Y + 12, 6, 4, "Wait", 32),
+    right: createArea(TUTORIAL_X + 13, TUTORIAL_Y + 12, 7, 4, "Right", 20),
+    down: createArea(TUTORIAL_X + 7, TUTORIAL_Y + 16, 6, 4, "Down", 18),
+    undo: createArea(TUTORIAL_X + 14, TUTORIAL_Y + 16, 6, 4, "Undo", 117),
+    enable: createArea(TUTORIAL_X + 1, TUTORIAL_Y + 14, 9, 5, ["  Use  ", " touch ", "control"]),
+    disable: createArea(TUTORIAL_X + 10, TUTORIAL_Y + 14, 9, 5, ["  Use  ", "  key- ", " board "]),
+}
 const glyph = {
     player: "☻",
     monster: "⚉",
@@ -1142,8 +1167,9 @@ function getName()
     return "Monster Maze";
 }
 
-function onConnect()
+function onConnect(initialMobileUiState="disabled")
 {
+    mobileUiState=initialMobileUiState;
     savegame = loadData();
     if (savegame) {
         stats = JSON.parse(savegame);
@@ -1293,6 +1319,17 @@ function loadLevel() {
     }
 }
 
+function drawTapArea(area, active=true) {
+    drawBox(active ? brightness.box : brightness.inactive, area.x, area.y, area.width, area.height);
+    if (Array.isArray(area.text)) {
+        for (let i = 0; i < area.text.length; ++i) {
+            drawText(area.text[i], active ? brightness.message : brightness.inactive, area.x + 1, area.y + 1 + i);
+        }
+    } else {
+        drawText(area.text, active ? brightness.message : brightness.inactive, area.x + 1, area.y + area.height/2);
+    }
+}
+
 function onUpdate()
 {
     clearScreen();
@@ -1320,34 +1357,54 @@ function onUpdate()
         return;
     }
 
-    // Help
-    drawBox(brightness.box, TUTORIAL_X, TUTORIAL_Y, TUTORIAL_WIDTH, TUTORIAL_HEIGHT);
-    drawText("Brave adventurer, ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 1)
-    drawText("grab all gems (?) ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 2)
-    drawText("and escape through", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 3)
-    drawText("the door. Monsters", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 4)
-    drawText("move up to 2 steps", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 5)
-    drawText("after your turn.  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 6)
-    drawText("They (?) only move", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 7)
-    drawText("closer to you and ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 8)
-    drawText("prefer horizontal ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 9)
-    drawText("moves. Moving on a", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 10)
-    drawText("button (?) toggles", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 11)
-    drawText("all gates (═══).  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 12)
-    drawText("                  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 13)
-    drawText("Arrow keys: Move  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 14)
-    drawText("Space: Wait a turn", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 15)
-    drawText("R: Reset", moves.length > 0 ? brightness.message : brightness.inactive, TUTORIAL_X + 1, TUTORIAL_Y + 16)
-    drawText("U: Undo", moves.length > 0 ? brightness.message : brightness.inactive, TUTORIAL_X + 11, TUTORIAL_Y + 16)
-    drawText("P: Prev", stats.currentLevel > 0 ? brightness.message : brightness.inactive, TUTORIAL_X + 1, TUTORIAL_Y + 17)
-    drawText("N: Next", stats.currentLevel == stats.maxLevel ? brightness.inactive : brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 17)
-    drawText("X: Replay", stats.best[stats.currentLevel].length ? brightness.message : brightness.inactive, TUTORIAL_X + 1, TUTORIAL_Y + 18)
-    drawText("S: Stats", brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 18)
+    if (mobileUiState === "controls") {
+        // Mobile UI
+        drawTapArea(tapAreas.replay, stats.best[stats.currentLevel].length > 0);
+        drawTapArea(tapAreas.stats);
+        drawTapArea(tapAreas.prev, stats.currentLevel > 0);
+        drawTapArea(tapAreas.reset, moves.length > 0);
+        drawTapArea(tapAreas.next, stats.currentLevel < stats.maxLevel);
+        drawTapArea(tapAreas.up);
+        drawTapArea(tapAreas.left);
+        drawTapArea(tapAreas.wait);
+        drawTapArea(tapAreas.right);
+        drawTapArea(tapAreas.down);
+        drawTapArea(tapAreas.undo, moves.length > 0);
+    } else {
+        // Help screen
+        drawBox(brightness.box, TUTORIAL_X, TUTORIAL_Y, TUTORIAL_WIDTH, TUTORIAL_HEIGHT);
+        drawText("Brave adventurer, ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 1)
+        drawText("grab all gems (?) ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 2)
+        drawText("and escape through", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 3)
+        drawText("the door. Monsters", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 4)
+        drawText("move up to 2 steps", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 5)
+        drawText("after your turn.  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 6)
+        drawText("They (?) only move", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 7)
+        drawText("closer to you and ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 8)
+        drawText("prefer horizontal ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 9)
+        drawText("moves. Moving on a", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 10)
+        drawText("button (?) toggles", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 11)
+        drawText("all gates (═══).  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 12)
+        drawText("                  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 13)
+        drawText(glyph.treasure, brightness.treasure, TUTORIAL_X + 16, TUTORIAL_Y + 2)
+        drawText(glyph.monster, brightness.monster, TUTORIAL_X + 7, TUTORIAL_Y + 7)
+        drawText(glyph.button, brightness.button, TUTORIAL_X + 9, TUTORIAL_Y + 11)
+        drawText("═", gatesOpen ? brightness.gateOpen : brightness.gateClosed, TUTORIAL_X + 13, TUTORIAL_Y + 12)
 
-    drawText(glyph.treasure, brightness.treasure, TUTORIAL_X + 16, TUTORIAL_Y + 2)
-    drawText(glyph.monster, brightness.monster, TUTORIAL_X + 7, TUTORIAL_Y + 7)
-    drawText(glyph.button, brightness.button, TUTORIAL_X + 9, TUTORIAL_Y + 11)
-    drawText("═", gatesOpen ? brightness.gateOpen : brightness.gateClosed, TUTORIAL_X + 13, TUTORIAL_Y + 12)
+        if (mobileUiState === "help") {
+            drawTapArea(tapAreas.enable);
+            drawTapArea(tapAreas.disable);
+        } else {
+            drawText("Arrow keys: Move  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 14)
+            drawText("Space: Wait a turn", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 15)
+            drawText("R: Reset", moves.length > 0 ? brightness.message : brightness.inactive, TUTORIAL_X + 1, TUTORIAL_Y + 16)
+            drawText("U: Undo", moves.length > 0 ? brightness.message : brightness.inactive, TUTORIAL_X + 11, TUTORIAL_Y + 16)
+            drawText("P: Prev", stats.currentLevel > 0 ? brightness.message : brightness.inactive, TUTORIAL_X + 1, TUTORIAL_Y + 17)
+            drawText("N: Next", stats.currentLevel == stats.maxLevel ? brightness.inactive : brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 17)
+            drawText("X: Replay", stats.best[stats.currentLevel].length ? brightness.message : brightness.inactive, TUTORIAL_X + 1, TUTORIAL_Y + 18)
+            drawText("S: Stats", brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 18)
+        }
+    }
 
     // Level
     for (let y=0; y<level.height; ++y) {
@@ -1516,6 +1573,27 @@ function onUpdate()
         "   " + glyph.treasure + " " + treasures.length;
     drawText(title, brightness.title, 0, 0);
     drawText(glyph.treasure, brightness.treasure, 32, 0)
+}
+
+function onTap(x, y) {
+    if (mobileUiState === "disabled") {
+        return;
+    }
+    if (screen == SCREEN_STATS) {
+        onInput(115);
+        return;
+    }
+    if (mobileUiState === "help") {
+        if (inArea(tapAreas.enable, x, y)) mobileUiState = "controls";
+        if (inArea(tapAreas.disable, x, y)) mobileUiState = "disabled";
+        return;
+    }
+    for (let area of Object.values(tapAreas)) {
+        if (area.key && inArea(area, x, y)) {
+            onInput(area.key);
+            return;
+        }
+    }
 }
 
 function onInput(key)
