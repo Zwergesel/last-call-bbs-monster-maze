@@ -7,7 +7,7 @@ TUTORIAL_Y = 0;
 TUTORIAL_WIDTH = 20;
 TUTORIAL_HEIGHT = 20;
 
-SAVEGAME_VERSION = 10;
+SAVEGAME_VERSION = 11;
 
 SCREEN_GAME = 1;
 SCREEN_STATS = 2;
@@ -354,22 +354,22 @@ const levels = [
 {
     id: "distraction",
     template: [
-        "#############",
-        "#. . .#. . .#",
-        "###   # ### #",
-        "I.#. . .#. .#",
-        "# # ### # ###",
-        "#. . . . . P#",
-        "### #####   #",
-        "#. . . M#. .#",
-        "# ### # # # #",
-        "#T T#.#.#.#.#",
-        "#   ### # ###",
-        "#T T . . . .#",
-        "#############",
+        "###############",
+        "#. . . . . . .#",
+        "##### ##### ###",
+        "I. .#. .#. .#.#",
+        "# ###   # ### #",
+        "#. . . P . . .#",
+        "### #####   # #",
+        "#. . . M#. .#.#",
+        "# ### # # # # #",
+        "#T T#.#.#.#. .#",
+        "#   ### # ### #",
+        "#T T . . . . .#",
+        "###############",
     ],
-    grades: [48, 52, 62],
-    solution: "ehovtewao3eyp3muolgjj4lr1unqm"
+    grades: [44, 48, 58],
+    solution: "afmodfhgdzdda3jibfclm2kcgpt"
 },
 {
     id: "stuck",
@@ -1186,7 +1186,12 @@ function onConnect(initialMobileUiState="disabled")
                 22, 30, 25, 31, 28, 29, 32, 33, 34, 35,
                 36, 37, 38, 39, 40, 41, 42, 43, 44, 45,
                 46, 47
-            ])
+            ]);
+        }
+        if (stats.version == 10) {
+            let mapping = [...Array(48).keys()];
+            mapping[16] = -1;
+            migrateSavegame(11, mapping);
         }
         if (stats.version != SAVEGAME_VERSION) {
             resetSavegame();

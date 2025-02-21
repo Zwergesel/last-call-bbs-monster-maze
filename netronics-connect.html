@@ -181,7 +181,8 @@
         const width = window.innerWidth * 0.95
         const fontSizeHeight = height / 1.1 / (terminal.height + 1)
         const fontSizeWidth = 2 * width / 1.2 / (terminal.width + 1)
-        screen.style.fontSize = Math.min(fontSizeHeight, fontSizeWidth) + "px"
+        const finalSize = Math.floor(Math.min(fontSizeHeight, fontSizeWidth) * 10) / 10
+        screen.style.fontSize = finalSize + "px"
       }
 
       window.addEventListener("resize", adjustFontSize)
