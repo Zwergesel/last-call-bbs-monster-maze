@@ -1067,7 +1067,7 @@ const levels = [
 },
 ];
 
-function createArea(x, y, width, height, text, key=null) {
+function createArea(x, y, width, height, text, key) {
     return { x: x, y: y, width: width, height: height, text: text, key: key };
 }
 
@@ -1167,8 +1167,9 @@ function getName()
     return "Monster Maze";
 }
 
-function onConnect(initialMobileUiState="disabled")
+function onConnect(initialMobileUiState)
 {
+    if (!initialMobileUiState) initialMobileUiState = "disabled";
     mobileUiState=initialMobileUiState;
     savegame = loadData();
     if (savegame) {
@@ -1189,7 +1190,8 @@ function onConnect(initialMobileUiState="disabled")
             ]);
         }
         if (stats.version == 10) {
-            let mapping = [...Array(48).keys()];
+            let mapping = [];
+            for (let i=0; i<48; ++i) mapping.push(i);
             mapping[16] = -1;
             migrateSavegame(11, mapping);
         }
@@ -1324,7 +1326,8 @@ function loadLevel() {
     }
 }
 
-function drawTapArea(area, active=true) {
+function drawTapArea(area, active) {
+    if (active === undefined) active = true;
     drawBox(active ? brightness.box : brightness.inactive, area.x, area.y, area.width, area.height);
     if (Array.isArray(area.text)) {
         for (let i = 0; i < area.text.length; ++i) {
@@ -1593,7 +1596,8 @@ function onTap(x, y) {
         if (inArea(tapAreas.disable, x, y)) mobileUiState = "disabled";
         return;
     }
-    for (let area of Object.values(tapAreas)) {
+    for (let key in tapAreas) {
+        const area = tapAreas[key];
         if (area.key && inArea(area, x, y)) {
             onInput(area.key);
             return;
