@@ -38,3 +38,4 @@ Your progress is saved automatically.
 - May 6, 2024: Version 4 of Monster Maze is released
 - September 13, 2024: Version 5 of Monster Maze is released
 - February 13, 2025: Version 6 of Monster Maze is released
+- February 26, 2025: Version 7 of Monster Maze is released

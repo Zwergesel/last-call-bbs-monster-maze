@@ -7,7 +7,7 @@ TUTORIAL_Y = 0;
 TUTORIAL_WIDTH = 20;
 TUTORIAL_HEIGHT = 20;
 
-SAVEGAME_VERSION = 11;
+SAVEGAME_VERSION = 12;
 
 SCREEN_GAME = 1;
 SCREEN_STATS = 2;
@@ -872,26 +872,26 @@ const levels = [
     solution: "hbceavmip1pv0lvhbaibp5lte2wwtcghu3voqe"
 },
 {
-    id: "deception",
+    id: "mansion",
     template: [
-        "  #######-#############",
-        "  #. . . P . . . . . .#",
-        "  # ### # #######   ###",
-        "  #. .#.#.#. . . . .#.#",
-        "  # ### # #   # ### # #",
-        "  #. . .#. . B#.#. . .#",
-        "  # ####### # # #   ###",
-        "  #. . . . .#. . . .#  ",
-        "####### ### # #G### #  ",
-        "#T T T#.#.#. .#. .#.#  ",
-        "#     # # ##### # # #  ",
-        "#T . Tg.#. . . .#. M#  ",
-        "#     # #   #   ### #  ",
-        "#T T T#. . .#. . . .#  ",
-        "#####################  ",
+        "###########-#########",
+        "#. . . . . . M#T .#B#",
+        "# ####### ### #   # #",
+        "#. .#. . .#.#.#. . .#",
+        "#   #     # # ##### #",
+        "#. . . P . .#.#. .#.#",
+        "# ### ######### ### #",
+        "#. T#. . . .G. . . .#",
+        "# ### ###   #   ### #",
+        "#. . . .#. .#. . . .#",
+        "# ##### ####### # ###",
+        "#. . .#.#. .#. .#. .#",
+        "### # ### # # # ### #",
+        "#T .#. . .#. .#. . .#",
+        "#####################",
     ],
-    grades: [108, 112, 120],
-    solution: "oficdvl15oitc2iiemdlkol2ofiirvlemvove2wuofianzet03ewjhosxsl"
+    grades: [148, 154, 166],
+    solution: "pgdwtemimrltogiipihbdp0bamodpbwz33ivobppjmvih3l2lnpglecndwa5cgopbavbpti205sxczi"
 },
 {
     id: "chambers",
@@ -920,6 +920,28 @@ const levels = [
     solution: "ckellbwiam0ve3gwlaleczpvicljeachd2eve1wwavwip3k0ilmdpvlbpserpgpej2twiof"
 },
 {
+    id: "deception",
+    template: [
+        "  #######-#############",
+        "  #. . . P . . . . . .#",
+        "  # ### # #######   ###",
+        "  #. .#.#.#. . . . .#.#",
+        "  # ### # #   # ### # #",
+        "  #. . .#. . B#.#. . .#",
+        "  # ####### # # #   ###",
+        "  #. . . . .#. . . .#  ",
+        "####### ### # #G### #  ",
+        "#T T T#.#.#. .#. .#.#  ",
+        "#     # # ##### # # #  ",
+        "#T . Tg.#. . . .#. M#  ",
+        "#     # #   #   ### #  ",
+        "#T T T#. . .#. . . .#  ",
+        "#####################  ",
+    ],
+    grades: [108, 112, 120],
+    solution: "oficdvl15oitc2iiemdlkol2ofiirvlemvove2wuofianzet03ewjhosxsl"
+},
+{
     id: "atlantis",
     template: [
         "    ###################    ",
@@ -946,26 +968,30 @@ const levels = [
     solution: "homjfmikn4zvynlhiac13o55cbigdhez3m0dfpiiplcnjo0b0biibhel3m0bokgdpxd1cp0thcljeacndse5twdwk5"
 },
 {
-    id: "mansion",
+    id: "labyrinth",
     template: [
-        "###########-#########",
-        "#. . . . . . M#T .#B#",
-        "# ####### ### #   # #",
-        "#. .#. . .#.#.#. . .#",
-        "#   #     # # ##### #",
-        "#. . . P . .#.#. .#.#",
-        "# ### ######### ### #",
-        "#. T#. . . .G. . . .#",
-        "# ### ###   #   ### #",
-        "#. . . .#. .#. . . .#",
-        "# ##### ####### # ###",
-        "#. . .#.#. .#. .#. .#",
-        "### # ### # # # ### #",
-        "#T .#. . .#. .#. . .#",
-        "#####################",
+        "###########################",
+        "#.#M B . . . .#. . .#M . .#",
+        "# ### ##### # # # ##### # #",
+        "#.#. .G. .#.#. .#.#. . .#.#",
+        "# ### ### ####### # # #####",
+        "#. .#.#. . .#. . . .#. . .#",
+        "# # # ############# #######",
+        "#.#. . . .#M .#. . .#. . .#",
+        "### ####### # ### ##### ###",
+        "#. .#. .#.#.#T#. . . . .#PI",
+        "# ### ### # ### # ####### #",
+        "#M . . . .#. . .#.#. .#. .#",
+        "# ##### ######### # ### ###",
+        "#. .#.#.#. . . . . .#BG. .#",
+        "### # ### ####### ### #####",
+        "#M#.#. . .#. .#. .#. .#. .#",
+        "# # ####### # ####### ### #",
+        "#. . .g. . .#. . . . . . .#",
+        "###########################",
     ],
-    grades: [148, 154, 166],
-    solution: "pgdwtemimrltogiipihbdp0bamodpbwz33ivobppjmvih3l2lnpglecndwa5cgopbavbpti205sxczi"
+    grades: [291, 301, 350],
+    solution: "3kdbccfeczd5kkiidflep10dkbcgbcu13siwh5mhlxpnesp50cwhmvijm2cycbdceaun3mhd02hlmcdmeskuebegmiee3wl1ygccdhheczdvdbdiriwifvk2jkuhaegbeueuokdufvwe5ml2husdpys"
 },
 {
     id: "doubleclick",
@@ -1195,6 +1221,15 @@ function onConnect(initialMobileUiState)
             mapping[16] = -1;
             migrateSavegame(11, mapping);
         }
+        if (stats.version == 11) {
+            migrateSavegame(12, [
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+                20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+                30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+                42, 41, 43, 40, 45, 46, 47, 48
+            ]);
+        }
         if (stats.version != SAVEGAME_VERSION) {
             resetSavegame();
         }
@@ -1345,21 +1380,21 @@ function onUpdate()
     if (screen == SCREEN_STATS) {
         drawBox(brightness.box, 1, 0, 54, 20);
         drawText("Lvl Mov Rank      Lvl Mov Rank      Lvl Mov Rank", brightness.message, 4, 1);
-        for (let i=0; i<16; ++i) {
+        for (let i=1; i<=16; ++i) {
             if (i < levels.length) {
-                drawText(right3(i + 1), brightness.message, 3, 3 + i);
-                drawText(right3(stats.best[i]), brightness.message, 8, 3 + i);
-                draw_stars(stats.best[i], levels[i].grades, 13, 3 + i);
+                drawText(right3(i), brightness.message, 3, 2 + i);
+                drawText(right3(stats.best[i]), brightness.message, 8, 2 + i);
+                draw_stars(stats.best[i], levels[i].grades, 13, 2 + i);
             }
             if (i + 16 < levels.length) {
-                drawText(right3(i + 17), brightness.message, 21, 3 + i);
-                drawText(right3(stats.best[i + 16]), brightness.message, 26, 3 + i);
-                draw_stars(stats.best[i + 16], levels[i + 16].grades, 31, 3 + i);
+                drawText(right3(i + 16), brightness.message, 21, 2 + i);
+                drawText(right3(stats.best[i + 16]), brightness.message, 26, 2 + i);
+                draw_stars(stats.best[i + 16], levels[i + 16].grades, 31, 2 + i);
             }
             if (i + 32 < levels.length) {
-                drawText(right3(i + 33), brightness.message, 39, 3 + i);
-                drawText(right3(stats.best[i + 32]), brightness.message, 44, 3 + i);
-                draw_stars(stats.best[i + 32], levels[i + 32].grades, 49, 3 + i);
+                drawText(right3(i + 32), brightness.message, 39, 2 + i);
+                drawText(right3(stats.best[i + 32]), brightness.message, 44, 2 + i);
+                draw_stars(stats.best[i + 32], levels[i + 32].grades, 49, 2 + i);
             }
         }
         return;
@@ -1575,7 +1610,8 @@ function onUpdate()
     }
 
     // Info Bar
-    const title = "Lvl " + format_level(stats.currentLevel + 1) +
+    const levelNumber = stats.currentLevel == 0 ? "Tutorial " : "Lvl " + format_level(stats.currentLevel);
+    const title = levelNumber +
         "  Move " + left3(moves.length) +
         "  Best " + left3(stats.best[stats.currentLevel]) +
         "   " + glyph.treasure + " " + treasures.length;
@@ -1621,6 +1657,16 @@ function onInput(key)
             } else if (cheatBuffer === "forgetmenot") {
                 resetSavegame();
                 loadLevel();
+            } else if (cheatBuffer.substring(0, 7) == "perfect" && cheatBuffer.length > 7) {
+                pwd = cheatBuffer.substring(7);
+                for (let i=0; i<levels.length; ++i) {
+                    solution = decrypt_solution(levels[i].solution, pwd, levels[i].grades[0]);
+                    if (solution.length) {
+                        stats.best[i] = solution;
+                        stats.maxLevel = i + 1;
+                    }
+                }
+                save();
             } else {
                 const info = levels[stats.currentLevel];
                 if (cheatBuffer.length && info.grades.length && info.solution) {
@@ -1674,14 +1720,6 @@ function onInput(key)
             }
         }
     }
-    if (key == 117 || key == 85) { // U
-        if (!gameWon && undoCounter <= 0 && moveDelay <= 0 && moves.length > 0) {
-            undoCounter = 1;
-            undoUsed += 1;
-            gameOver = false;
-            return;
-        }
-    }
 
     if (gameWon || gameOver) {
         if (is_continue(key)) {
@@ -1702,6 +1740,15 @@ function onInput(key)
 
     // No control during monster moves or undos
     if (moveDelay > 0 || undoCounter > 0) return;
+
+    if (key == 117 || key == 85) { // U
+        if (moves.length > 0) {
+            undoCounter = 1;
+            undoUsed += 1;
+            gameOver = false;
+            return;
+        }
+    }
 
     if (key == 17) onPlayerMove('^'); // Up
     if (key == 18) onPlayerMove('v'); // Down
@@ -1796,7 +1843,7 @@ function is_walkable(symbol) {
 }
 
 function format_level(number) {
-    let str = number + "/" + levels.length;
+    let str = number + "/" + (levels.length - 1);
     if (number < 10) return str + " ";
     return str;
 }
