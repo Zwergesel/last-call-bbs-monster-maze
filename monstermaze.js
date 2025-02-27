@@ -1708,27 +1708,12 @@ function onInput(key)
         return;
     }
     if (key == 120 || key == 88) { // X
-        if (stats.best[stats.currentLevel].length) {
-            if (replay.length > 0) {
-                replay = "";
-                return;
-            } else {
-                loadLevel();
-                replay = stats.best[stats.currentLevel];
-                replayDelay = REPLAY_START_DELAY;
-                return;
-            }
-        }
-    }
-
-    if (gameWon || gameOver) {
-        if (is_continue(key)) {
-            if (gameWon) {
-                stats.currentLevel += 1;
-                resetUsed = 0;
-                undoUsed = 0;
-            }
+        if (replay.length > 0) {
+            replay = "";
+        } else if (stats.best[stats.currentLevel].length) {
             loadLevel();
+            replay = stats.best[stats.currentLevel];
+            replayDelay = REPLAY_START_DELAY;
         }
         return;
     }
@@ -1746,8 +1731,20 @@ function onInput(key)
             undoCounter = 1;
             undoUsed += 1;
             gameOver = false;
-            return;
         }
+        return;
+    }
+
+    if (gameWon || gameOver) {
+        if (is_continue(key)) {
+            if (gameWon) {
+                stats.currentLevel += 1;
+                resetUsed = 0;
+                undoUsed = 0;
+            }
+            loadLevel();
+        }
+        return;
     }
 
     if (key == 17) onPlayerMove('^'); // Up
