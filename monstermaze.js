@@ -1125,7 +1125,7 @@ const glyph = {
     spot: ".",
     button: "*",
     baseWall: "#",
-    walls: "╬║═╝═╚═╩║║╗╣╔╠╦╬",
+    walls: "╬║═╝═╚═╩║║╗╣╔╠╦╬", // ██▄█▄█▄█▄█▄█▄█▄█
     star: "*",
     blank: ".",
 }
