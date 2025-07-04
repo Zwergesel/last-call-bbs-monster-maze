@@ -56,7 +56,6 @@
     }
 
     html {
-      display: flex;
       padding: 0;
       margin: 0;
       width: 100%;
@@ -64,17 +63,18 @@
     }
 
     body {
-      overflow: hidden;
+      position: relative;
       padding: 0;
       margin: 0;
-      display: flex;
       width: 100%;
       height: 100%;
+      display: flex;
       align-items: center;
       justify-content: center;
       background-image: url('bg.jpg');
       background-size: cover;
       background-repeat: no-repeat;
+      overflow: hidden;
     }
 
     #screen {
@@ -94,8 +94,6 @@
     #screen div {
       display: inline-block;
       text-align: center;
-      align-items: center;
-      justify-content: center;
       width: 1.2ch;
       height: 1.1em;
       line-height: 1.2em;
@@ -197,7 +195,7 @@
             const el = terminal.grid[j][i]
             if (char !== terminal.buffer_previous[j][i][0]) {
               terminal.buffer_previous[j][i][0] = char
-              el.textContent = char.replace('⚉', 'ӝ').replace("-", "‒")
+              el.textContent = char
             }
             if (color !== terminal.buffer_previous[j][i][1]) {
               terminal.buffer_previous[j][i][1] = color
@@ -300,8 +298,22 @@
         assert(typeof getName === 'function', 'The function getName() is missing from the script.')
         assert(typeof getName() === 'string', 'The function getName() should return a string.')
 
+        const browserGlyphs = {
+          player: "☻",
+          monster: "ӝ",
+          exits: { horizontal: "‒", vertical: "|" },
+          gates: { horizontal: "▬", vertical: "┃" },
+          treasure: "◆",
+          spot: { even: "⸳", odd: "⸳" }, // ⁃∙⋅◦,⬝⋅
+          button: "⚷",
+          buttonName: "key",
+          walls: "▪╹╸┛╺┗━┻╻┃┓┫┏┣┳╋",
+          star: "★",
+          blank: "☆",
+        }
+
         document.title = getName() + ' — ' + document.title
-        onConnect(isTouchDevice() ? 'help' : 'disabled')
+        onConnect(isTouchDevice() ? 'help' : 'disabled', browserGlyphs)
         setInterval(onEngineUpdate, 34)
       }
 

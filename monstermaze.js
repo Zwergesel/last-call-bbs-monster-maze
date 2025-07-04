@@ -950,13 +950,13 @@ const levels = [
         "    #.#. . . . .g. .#. . B#",
         "    # # ### ####### # #####",
         "    #.#.#. . . . .#. .#    ",
-        "    # # # ##### ╗ # # #    ",
+        "    # # # ##### # # # #    ",
         "    #.#. .#. . .#. .#.#    ",
         "    # # # # ### # # # #    ",
         "    #. .#.#PGT#.#.#.#.#    ",
         "    # # # # ### # # # #    ",
         "    #.#.#.#. . .#.#.#.#    ",
-        "    # # # ╚ ##### # # #    ",
+        "    # # # # ##### # # #    ",
         "    #.#.#. . . . .#.#.#    ",
         "##### # ### ####### # #    ",
         "I. .g. . . . . . . .#.#    ",
@@ -1120,18 +1120,19 @@ const tapAreas = {
 const glyph = {
     player: "☻",
     monster: "⚉",
-    exits: "I-",
+    exits: { horizontal: "-", vertical: "I" },
+    gates: { horizontal: "═", vertical: "║" },
     treasure: "♦",
-    spot: ".",
+    spot: { even: ".", odd: "." },
     button: "*",
-    baseWall: "#",
-    walls: "╬║═╝═╚═╩║║╗╣╔╠╦╬", // ██▄█▄█▄█▄█▄█▄█▄█
+    buttonName: "button",
+    walls: "╬║═╝═╚═╩║║╗╣╔╠╦╬", // 1 = Up, 2 = Left, 4 = Right, 8 = Down
     star: "*",
     blank: ".",
 }
 const brightness = {
     level: 10,
-    spot: 7,
+    spot: 5,
     player: 15,
     monster: 12,
     treasure: 16,
@@ -1193,10 +1194,16 @@ function getName()
     return "Monster Maze";
 }
 
-function onConnect(initialMobileUiState)
+function onConnect(initialMobileUiState, replacementGlyphs)
 {
     if (!initialMobileUiState) initialMobileUiState = "disabled";
-    mobileUiState=initialMobileUiState;
+    if (replacementGlyphs) {
+        for (let key in replacementGlyphs) {
+            glyph[key] = replacementGlyphs[key];
+        }
+    }
+
+    mobileUiState = initialMobileUiState;
     savegame = loadData();
     if (savegame) {
         stats = JSON.parse(savegame);
@@ -1327,22 +1334,24 @@ function loadLevel() {
             let symbol = level.template[y][x];
             if (symbol == 'M') {
                 monsters.push({ x: x, y: y, dead: false });
-                symbol = glyph.spot;
+                symbol = '.';
             } else if (symbol == 'P') {
                 player = { x: x, y: y };
-                symbol = glyph.spot;
+                symbol = '.';
             } else if (symbol == 'T') {
                 treasures.push({ x: x, y: y });
-                symbol = glyph.spot;
+                symbol = '.';
             } else if (symbol == 'B') {
                 buttons.push({ x: x, y: y });
                 symbol = 'B';
             } else if (symbol == '.') {
-                symbol = glyph.spot;
+                symbol = '.';
             } else if (symbol == ';') {
                 symbol = 'g';
-            } else if (glyph.walls.indexOf(symbol) >= 0) {
-                // keep symbol
+            } else if (symbol == 'I') {
+                symbol = glyph.exits.vertical;
+            } else if (symbol == '-') {
+                symbol = glyph.exits.horizontal;
             } else if (is_wall(symbol) || symbol == 'G' || symbol == 'g') {
                 let index = 0;
                 if (y > 0 && is_wall_or_exit(level.template[y-1][x])) index += 1;
@@ -1350,7 +1359,8 @@ function loadLevel() {
                 if (x + 1 < level.width && is_wall_or_exit(level.template[y][x+1])) index += 4;
                 if (y + 1 < level.height && is_wall_or_exit(level.template[y+1][x])) index += 8;
                 if (symbol == 'G' || symbol == 'g') {
-                    gates.push({ x: x, y: y, symbol: glyph.walls[index], inverse: symbol == 'g' });
+                    gate_glyph = index == 6 ? glyph.gates.horizontal : glyph.gates.vertical;
+                    gates.push({ x: x, y: y, symbol: gate_glyph, inverse: symbol == 'g' });
                 } else {
                     symbol = glyph.walls[index];
                 }
@@ -1416,23 +1426,24 @@ function onUpdate()
     } else {
         // Help screen
         drawBox(brightness.box, TUTORIAL_X, TUTORIAL_Y, TUTORIAL_WIDTH, TUTORIAL_HEIGHT);
-        drawText("Brave adventurer, ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 1)
-        drawText("grab all gems (?) ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 2)
-        drawText("and escape through", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 3)
-        drawText("the door. Monsters", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 4)
-        drawText("move up to 2 steps", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 5)
-        drawText("after your turn.  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 6)
-        drawText("They (?) only move", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 7)
-        drawText("closer to you and ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 8)
-        drawText("prefer horizontal ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 9)
-        drawText("moves. Moving on a", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 10)
-        drawText("button (?) toggles", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 11)
-        drawText("all gates (═══).  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 12)
-        drawText("                  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 13)
-        drawText(glyph.treasure, brightness.treasure, TUTORIAL_X + 16, TUTORIAL_Y + 2)
-        drawText(glyph.monster, brightness.monster, TUTORIAL_X + 7, TUTORIAL_Y + 7)
-        drawText(glyph.button, brightness.button, TUTORIAL_X + 9, TUTORIAL_Y + 11)
-        drawText("═", gatesOpen ? brightness.gateOpen : brightness.gateClosed, TUTORIAL_X + 13, TUTORIAL_Y + 12)
+        drawText("Brave adventurer, ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 1);
+        drawText("grab all gems (?) ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 2);
+        drawText("and escape through", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 3);
+        drawText("the door. Monsters", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 4);
+        drawText("move up to 2 steps", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 5);
+        drawText("after your turn.  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 6);
+        drawText("They (?) only move", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 7);
+        drawText("closer to you and ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 8);
+        drawText("prefer horizontal ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 9);
+        drawText("moves. Moving on a", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 10);
+        drawText(glyph.buttonName + " (?) toggles", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 11);
+        drawText("all gates (???).  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 12);
+        drawText("                  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 13);
+        drawText(glyph.treasure, brightness.treasure, TUTORIAL_X + 16, TUTORIAL_Y + 2);
+        drawText(glyph.monster, brightness.monster, TUTORIAL_X + 7, TUTORIAL_Y + 7);
+        drawText(glyph.button, brightness.button, TUTORIAL_X + glyph.buttonName.length + 3, TUTORIAL_Y + 11);
+        drawText(glyph.walls[6] + glyph.gates.horizontal + glyph.walls[6], brightness.level, TUTORIAL_X + 12, TUTORIAL_Y + 12);
+        drawText(glyph.gates.horizontal, gatesOpen ? brightness.gateOpen : brightness.gateClosed, TUTORIAL_X + 13, TUTORIAL_Y + 12);
 
         if (mobileUiState === "help") {
             drawTapArea(tapAreas.enable);
@@ -1452,7 +1463,13 @@ function onUpdate()
     // Level
     for (let y=0; y<level.height; ++y) {
         for (let x=0; x<level.width; ++x) {
-            drawText(level.data[y][x], level.data[y][x] == glyph.spot ? brightness.spot : brightness.level, level.x + x, level.y + y);
+            let level_glyph = level.data[y][x];
+            let bright = brightness.level;
+            if (level_glyph == '.') {
+                level_glyph = (x + y) % 4 == 2 ? glyph.spot.odd : glyph.spot.even;
+                bright = brightness.spot;
+            }
+            drawText(level_glyph, bright, level.x + x, level.y + y);
         }
     }
 
@@ -1828,11 +1845,11 @@ function is_wall_or_exit(symbol) {
 }
 
 function is_wall(symbol) {
-    return symbol == glyph.baseWall || glyph.walls.indexOf(symbol) >= 0;
+    return symbol == '#' || glyph.walls.indexOf(symbol) >= 0;
 }
 
 function is_exit(symbol) {
-    return glyph.exits.indexOf(symbol) >= 0;
+    return symbol == 'I' || symbol == '-' || symbol == glyph.exits.horizontal || symbol == glyph.exits.vertical;
 }
 
 function is_walkable(symbol) {
