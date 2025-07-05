@@ -1571,7 +1571,13 @@ function onUpdate()
         }
         if (undoCounter <= 0 && (monsters[i].x == player.x && monsters[i].y == player.y)) {
             gameOver = true;
-            messages = [" You were eaten by a grue! "];
+            messages = [
+                " You were eaten by a grue! ",
+                "                           ",
+                mobileUiState != "disabled" ?
+                " Undo or tap here to reset " :
+                "  U: Undo  R/Space: Reset  ",
+            ];
         }
         drawText(glyph.monster, brightness.monster, level.x + monsters[i].x, level.y + monsters[i].y);
     }
