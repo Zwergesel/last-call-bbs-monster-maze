@@ -7,7 +7,7 @@ TUTORIAL_Y = 0;
 TUTORIAL_WIDTH = 20;
 TUTORIAL_HEIGHT = 20;
 
-SAVEGAME_VERSION = 12;
+SAVEGAME_VERSION = 13;
 
 SCREEN_GAME = 1;
 SCREEN_STATS = 2;
@@ -74,19 +74,17 @@ const levels = [
 {
     id: "lonely",
     template: [
-        "    ###########    ",
-        "    #. . . . .#    ",
-        "    #         #    ",
-        "    #. . . M .#    ",
-        "  ###         ###  ",
-        "  #. . . . . . .#  ",
-        "  # ###     #####  ",
-        "  #. T . . . . .#  ",
-        "###             ###",
-        "#. . . . . . . . .#",
-        "#                 #",
-        "#. . . . P . . . .#",
-        "#########-#########",
+        "    #######    ",
+        "    #. M .#    ",
+        "#####   #######",
+        "#. . . . . . .#",
+        "# ### ### ### #",
+        "#. T . . . . .#",
+        "#             #",
+        "#. . . . . . .#",
+        "###         ###",
+        "  #. . P . .#  ",
+        "  #####-#####  ",
     ],
     grades: [8, 10, 12],
     solution: "un2zm0rsa"
@@ -182,18 +180,18 @@ const levels = [
 {
     id: "button",
     template: [
-        "#-#   #######                      ",
-        "#P#   #. . .#                      ",
-        "# #   # ### #                      ",
-        "#.#   #.# #.#                      ",
-        "# ##### ### #####               ###",
-        "#. . . .G. B . .#               #M#",
-        "############### ################# #",
-        "              #T . . . . . . . . .#",
-        "              #####################",
+        "    #######             #####",
+        "    #. . .#             #. M#",
+        "    # ### #             #G###",
+        "    #.# #.#             #.#  ",
+        "##### ### ###########   # #  ",
+        "IP . . .GB . . . . .#   #.#  ",
+        "########### ####### ##### #  ",
+        "          #T#     #. . . .#  ",
+        "          ###     #########  ",
     ],
-    grades: [26, 28, 30],
-    solution: "o5hllxvdfse5inbjbf"
+    grades: [18, 20, 26],
+    solution: "jficgpohdrojw1"
 },
 {
     id: "backdoor",
@@ -1224,8 +1222,7 @@ function onConnect(initialMobileUiState, replacementGlyphs)
             ]);
         }
         if (stats.version == 10) {
-            let mapping = [];
-            for (let i=0; i<48; ++i) mapping.push(i);
+            var mapping = getDefaultMigrationMapping();
             mapping[16] = -1;
             migrateSavegame(11, mapping);
         }
@@ -1237,6 +1234,11 @@ function onConnect(initialMobileUiState, replacementGlyphs)
                 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
                 42, 41, 43, 40, 45, 46, 47, 48
             ]);
+        }
+        if (stats.version == 12) {
+            var mapping = getDefaultMigrationMapping();
+            mapping[7] = -1;
+            migrateSavegame(13, mapping);
         }
         if (stats.version != SAVEGAME_VERSION) {
             resetSavegame();
@@ -1261,6 +1263,12 @@ function resetSavegame()
     stats = { player: player_name, version: SAVEGAME_VERSION, currentLevel: 0, maxLevel: 0, best: [] }
     while (stats.best.length < levels.length) stats.best.push("");
     save();
+}
+
+function getDefaultMigrationMapping() {
+    let mapping = [];
+    for (let i=0; i<48; ++i) mapping.push(i);
+    return mapping;
 }
 
 function migrateSavegame(toVersion, migrationMap) {
@@ -1409,56 +1417,6 @@ function onUpdate()
             }
         }
         return;
-    }
-
-    if (mobileUiState === "controls") {
-        // Mobile UI
-        drawTapArea(tapAreas.replay, stats.best[stats.currentLevel].length > 0);
-        drawTapArea(tapAreas.stats);
-        drawTapArea(tapAreas.prev, stats.currentLevel > 0);
-        drawTapArea(tapAreas.reset, moves.length > 0);
-        drawTapArea(tapAreas.next, stats.currentLevel < stats.maxLevel);
-        drawTapArea(tapAreas.up);
-        drawTapArea(tapAreas.left);
-        drawTapArea(tapAreas.wait);
-        drawTapArea(tapAreas.right);
-        drawTapArea(tapAreas.down);
-        drawTapArea(tapAreas.undo, moves.length > 0);
-    } else {
-        // Help screen
-        drawBox(brightness.box, TUTORIAL_X, TUTORIAL_Y, TUTORIAL_WIDTH, TUTORIAL_HEIGHT);
-        drawText("Brave adventurer, ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 1);
-        drawText("grab all gems (?) ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 2);
-        drawText("and escape through", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 3);
-        drawText("the door. Monsters", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 4);
-        drawText("move up to 2 steps", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 5);
-        drawText("after your turn.  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 6);
-        drawText("They (?) only move", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 7);
-        drawText("closer to you and ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 8);
-        drawText("prefer horizontal ", stats.currentLevel <= 2 ? brightness.highlighted : brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 9);
-        drawText("moves. Moving on a", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 10);
-        drawText(glyph.buttonName + " (?) toggles", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 11);
-        drawText("all gates (???).  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 12);
-        drawText("                  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 13);
-        drawText(glyph.treasure, brightness.treasure, TUTORIAL_X + 16, TUTORIAL_Y + 2);
-        drawText(glyph.monster, brightness.monster, TUTORIAL_X + 7, TUTORIAL_Y + 7);
-        drawText(glyph.button, brightness.button, TUTORIAL_X + glyph.buttonName.length + 3, TUTORIAL_Y + 11);
-        drawText(glyph.walls[6] + glyph.gates.horizontal + glyph.walls[6], brightness.level, TUTORIAL_X + 12, TUTORIAL_Y + 12);
-        drawText(glyph.gates.horizontal, gatesOpen ? brightness.gateOpen : brightness.gateClosed, TUTORIAL_X + 13, TUTORIAL_Y + 12);
-
-        if (mobileUiState === "help") {
-            drawTapArea(tapAreas.enable);
-            drawTapArea(tapAreas.disable);
-        } else {
-            drawText("Arrow keys: Move  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 14)
-            drawText("Space: Wait a turn", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 15)
-            drawText("R: Reset", moves.length > 0 ? brightness.message : brightness.inactive, TUTORIAL_X + 1, TUTORIAL_Y + 16)
-            drawText("U: Undo", moves.length > 0 ? brightness.message : brightness.inactive, TUTORIAL_X + 11, TUTORIAL_Y + 16)
-            drawText("P: Prev", stats.currentLevel > 0 ? brightness.message : brightness.inactive, TUTORIAL_X + 1, TUTORIAL_Y + 17)
-            drawText("N: Next", stats.currentLevel == stats.maxLevel ? brightness.inactive : brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 17)
-            drawText("X: Replay", stats.best[stats.currentLevel].length ? brightness.message : brightness.inactive, TUTORIAL_X + 1, TUTORIAL_Y + 18)
-            drawText("S: Stats", brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 18)
-        }
     }
 
     // Level
@@ -1641,6 +1599,56 @@ function onUpdate()
         "   " + glyph.treasure + " " + treasures.length;
     drawText(title, brightness.title, 0, 0);
     drawText(glyph.treasure, brightness.treasure, 32, 0)
+
+    if (mobileUiState === "controls") {
+        // Mobile UI
+        drawTapArea(tapAreas.replay, stats.best[stats.currentLevel].length > 0);
+        drawTapArea(tapAreas.stats);
+        drawTapArea(tapAreas.prev, stats.currentLevel > 0);
+        drawTapArea(tapAreas.reset, moves.length > 0);
+        drawTapArea(tapAreas.next, stats.currentLevel < stats.maxLevel);
+        drawTapArea(tapAreas.up);
+        drawTapArea(tapAreas.left);
+        drawTapArea(tapAreas.wait);
+        drawTapArea(tapAreas.right);
+        drawTapArea(tapAreas.down);
+        drawTapArea(tapAreas.undo, moves.length > 0);
+    } else {
+        // Help screen
+        drawBox(brightness.box, TUTORIAL_X, TUTORIAL_Y, TUTORIAL_WIDTH, TUTORIAL_HEIGHT);
+        drawText("Brave adventurer, ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 1);
+        drawText("grab all gems (?) ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 2);
+        drawText("and escape through", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 3);
+        drawText("the door. Monsters", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 4);
+        drawText("move up to 2 steps", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 5);
+        drawText("after your turn.  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 6);
+        drawText("They (?) only move", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 7);
+        drawText("closer to you and ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 8);
+        drawText("prefer horizontal ", stats.currentLevel <= 2 ? brightness.highlighted : brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 9);
+        drawText("moves. Moving on a", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 10);
+        drawText(glyph.buttonName + " (?) toggles", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 11);
+        drawText("all gates (???).  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 12);
+        drawText("                  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 13);
+        drawText(glyph.treasure, brightness.treasure, TUTORIAL_X + 16, TUTORIAL_Y + 2);
+        drawText(glyph.monster, brightness.monster, TUTORIAL_X + 7, TUTORIAL_Y + 7);
+        drawText(glyph.button, brightness.button, TUTORIAL_X + glyph.buttonName.length + 3, TUTORIAL_Y + 11);
+        drawText(glyph.walls[6] + glyph.gates.horizontal + glyph.walls[6], brightness.level, TUTORIAL_X + 12, TUTORIAL_Y + 12);
+        drawText(glyph.gates.horizontal, gatesOpen ? brightness.gateOpen : brightness.gateClosed, TUTORIAL_X + 13, TUTORIAL_Y + 12);
+
+        if (mobileUiState === "help") {
+            drawTapArea(tapAreas.enable);
+            drawTapArea(tapAreas.disable);
+        } else {
+            drawText("Arrow keys: Move  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 14)
+            drawText("Space: Wait a turn", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 15)
+            drawText("R: Reset", moves.length > 0 ? brightness.message : brightness.inactive, TUTORIAL_X + 1, TUTORIAL_Y + 16)
+            drawText("U: Undo", moves.length > 0 ? brightness.message : brightness.inactive, TUTORIAL_X + 11, TUTORIAL_Y + 16)
+            drawText("P: Prev", stats.currentLevel > 0 ? brightness.message : brightness.inactive, TUTORIAL_X + 1, TUTORIAL_Y + 17)
+            drawText("N: Next", stats.currentLevel == stats.maxLevel ? brightness.inactive : brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 17)
+            drawText("X: Replay", stats.best[stats.currentLevel].length ? brightness.message : brightness.inactive, TUTORIAL_X + 1, TUTORIAL_Y + 18)
+            drawText("S: Stats", brightness.message, TUTORIAL_X + 11, TUTORIAL_Y + 18)
+        }
+    }
 }
 
 function onTap(x, y) {
