@@ -1144,6 +1144,7 @@ const brightness = {
     inactive: 4,
     box: 9,
     star: 12,
+    highlighted: 17
 }
 const explosion = [
     { duration: 2, symbol: '?', brightness: 14 },
@@ -1434,7 +1435,7 @@ function onUpdate()
         drawText("after your turn.  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 6);
         drawText("They (?) only move", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 7);
         drawText("closer to you and ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 8);
-        drawText("prefer horizontal ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 9);
+        drawText("prefer horizontal ", stats.currentLevel <= 2 ? brightness.highlighted : brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 9);
         drawText("moves. Moving on a", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 10);
         drawText(glyph.buttonName + " (?) toggles", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 11);
         drawText("all gates (???).  ", brightness.message, TUTORIAL_X + 1, TUTORIAL_Y + 12);
